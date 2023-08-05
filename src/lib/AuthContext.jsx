@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react'
-import { getCurrentUser } from '../api/auth'
+import { getCurrentUser } from '../api/auth';
 
 const AuthContext = createContext();
 
@@ -14,8 +14,8 @@ const AuthProvider = ({children}) => {
         const user = await getCurrentUser();
         setAuthenticated(!!user);
 
-        if (user) {
-          setUid(user.data.id);
+        if (user && user.data.id) {
+          setUid(user.data.uid);
         }
       } catch (error) {
         setAuthenticated(false);

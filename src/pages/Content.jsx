@@ -3,6 +3,7 @@ import { Grid } from '@material-ui/core'
 import { Route, Routes } from 'react-router-dom';
 import Top from '../components/Top';
 import SignUpForm from '../components/Auth/SignUpForm';
+import SignInForm from '../components/Auth/SignInForm';
 
 const Content = () => {
   return (
@@ -12,6 +13,7 @@ const Content = () => {
         <Routes>
           <Route index element={<Top />} />
           <Route path='/signup_form' element={<SignUpForm />} />
+          <Route path='/signin_form' element={<SignInForm />} />
         </Routes>
       </Grid>
     </Grid>

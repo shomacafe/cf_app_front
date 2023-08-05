@@ -1,12 +1,23 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom';
 import { signUp } from '../../api/auth';
+import { AuthContext } from '../../lib/AuthContext';
 
 
 const SignUpForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
+  const { authenticated } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if(authenticated) {
+      navigate('/');
+      alert('すでにログインしています。');
+    }
+  }, []);
 
   const handleSignUp = async () => {
     try {
@@ -18,6 +29,7 @@ const SignUpForm = () => {
 
       const response = await signUp(data);
 
+      alert("新規登録しました。");
       console.log('ユーザー登録成功', response.data);
     } catch (error) {
       console.log('ユーザー登録失敗:', error.response.data)
@@ -27,15 +39,9 @@ const SignUpForm = () => {
   return (
     <>
       <h1>新規登録</h1>
-      <div>
-        <input type='email' placeholder='メールアドレス' onChange={(e) => setEmail(e.target.value)} />
-      </div>
-      <div>
-        <input type="password" placeholder='パスワード' onChange={(e) => setPassword(e.target.value)} />
-      </div>
-      <div>
-        <input type="password" placeholder='パスワード確認' onChange={(e) => setPasswordConfirmation(e.target.value)} />
-      </div>
+      <p><input type='email' placeholder='メールアドレス' onChange={(e) => setEmail(e.target.value)} /></p>
+      <p><input type="password" placeholder='パスワード' onChange={(e) => setPassword(e.target.value)} /></p>
+      <p><input type="password" placeholder='パスワード確認' onChange={(e) => setPasswordConfirmation(e.target.value)} /></p>
       <div>
         <button onClick={handleSignUp}>登録する</button>
       </div>

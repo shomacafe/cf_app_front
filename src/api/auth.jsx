@@ -27,7 +27,7 @@ export const signIn = async (params) => {
 
 export const signOut = async () => {
   try {
-    await  clientApi.delete('auth/sign_out/', {
+    await  clientApi.delete('auth/sign_out', {
       headers: {
         'access_token': Cookies.get('access_token'),
         'client': Cookies.get('client'),
@@ -45,13 +45,13 @@ export const signOut = async () => {
 
 // ログイン済みユーザーを取得
 export const getCurrentUser = async () => {
-  if (!Cookies.get('access_token') || !Cookies.get("client") || !Cookies.get("uid")) return null;
+  if (!Cookies.get('access_token') || !Cookies.get('client') || !Cookies.get('uid')) return null;
   try {
-    const response = await clientApi.get("/auth/sessions", {
+    const response = await clientApi.get('/auth/sessions', {
       headers: {
-        "access-token": Cookies.get("access_token"),
-        "client": Cookies.get("client"),
-        "uid": Cookies.get("uid")
+        'access-token': Cookies.get('access_token'),
+        'client': Cookies.get('client'),
+        'uid': Cookies.get('uid')
       },
     });
 
