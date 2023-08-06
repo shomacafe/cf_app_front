@@ -4,6 +4,7 @@ import { Route, Routes } from 'react-router-dom';
 import Top from '../components/Top';
 import SignUpForm from '../components/Auth/SignUpForm';
 import SignInForm from '../components/Auth/SignInForm';
+import CreateProject from '../components/Project/CreateProject';
 
 const Content = () => {
   return (
@@ -14,6 +15,7 @@ const Content = () => {
           <Route index element={<Top />} />
           <Route path='/signup_form' element={<SignUpForm />} />
           <Route path='/signin_form' element={<SignInForm />} />
+          <Route path='/new/project' element={<CreateProject />} />
         </Routes>
       </Grid>
     </Grid>

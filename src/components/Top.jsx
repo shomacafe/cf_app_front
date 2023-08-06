@@ -9,7 +9,10 @@ const Top = () => {
         新規登録は<Link to='/signup_form'>こちら</Link>
       </div>
       <div>
-        ログインは<Link to={`/signin_form/`}>こちら</Link>
+        ログインは<Link to={`/signin_form`}>こちら</Link>
+      </div>
+      <div>
+        <Link to={`/new/project`}>プロジェクトをはじめる</Link>
       </div>
     </>
   )
