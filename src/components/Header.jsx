@@ -8,8 +8,6 @@ import SignOutButton from './Auth/SignOutButton';
 const Header = () => {
   const { authenticated, uid } = useContext(AuthContext);
 
-  console.log('ヘッダーにおけるログイン状況:', authenticated)
-
   return (
     <AppBar position='static' style={{ background: "pink" }}>
       <Toolbar>
