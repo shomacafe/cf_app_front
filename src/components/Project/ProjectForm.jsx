@@ -42,7 +42,7 @@ const ProjectForm = ({ handleNext }) => {
   }, [apiImageFiles, setProjectFormData])
 
   const onSubmit = (data) => {
-    data.description = projectFormData.desctiption;
+    data.description = projectFormData.description;
     data.project_images = apiImageFiles;
     setProjectFormData(data)
     console.log('プロジェクトフォーム「次へ」押下時', projectFormData)
@@ -213,11 +213,11 @@ const ProjectForm = ({ handleNext }) => {
             <h3>プロジェクトの説明</h3>
             <ReactQuill
               theme='snow'
-              value={projectFormData.desctiption}
+              value={projectFormData.description}
               onChange={(value) =>
                 setProjectFormData((prevProjectFormData) => ({
                   ...prevProjectFormData,
-                  desctiption: value,
+                  description: value,
                 }))
               }
               style={{height: '800px'}}

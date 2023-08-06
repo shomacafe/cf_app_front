@@ -34,6 +34,11 @@ const CreateProject = () => {
   const [apiReturnImageFiles, setAipReturnImageFiles] = useState([]);
   const [published, setPublished] = useState(false);
 
+
+  useEffect(() => {
+    console.log('formDataが更新されました:', projectFormData);
+  }, [projectFormData]);
+
   const getSteps = () => {
     return ['プロジェクト登録', 'リターン登録', '確認'];
   }
