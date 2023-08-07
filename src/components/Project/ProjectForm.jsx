@@ -10,8 +10,6 @@ import 'react-quill/dist/quill.snow.css';
 import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
 
-
-
 const ProjectForm = ({ handleNext }) => {
   const {
     projectFormData,
@@ -31,8 +29,6 @@ const ProjectForm = ({ handleNext }) => {
     defaultValues: projectFormData,
   });
   const watchedFields = watch()
-
-
 
   useEffect(() => {
     setProjectFormData((prevProjectFormData) => ({
@@ -81,6 +77,28 @@ const ProjectForm = ({ handleNext }) => {
     setApiImageFiles((prevApiImageFiles) => {
       return prevApiImageFiles.filter((_, i) => i !== index);
     })
+  };
+
+  // const quillModules = {
+  //   toolbar: [
+  //     ['bold', 'italic', 'underline', 'strike'],
+  //     [{ header: [1, 2, 3, 4, 5, 6, false] }],
+  //     ['link', 'image'],
+  //     [{ list: 'ordered' }, { list: 'bullet' }],
+  //     [{ align: [] }],
+  //     ['clean'],
+  //   ],
+  // }
+
+  const imageUploadCallback = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        resolve(reader.result);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   };
 
   return (
@@ -231,6 +249,7 @@ const ProjectForm = ({ handleNext }) => {
                   ['clean'],
                 ],
               }}
+              imageUploadCallback={imageUploadCallback}
             />
           </div>
           <Button type='submit' variant='contained' color='primary'>
