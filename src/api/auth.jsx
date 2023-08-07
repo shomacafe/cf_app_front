@@ -11,7 +11,6 @@ export const signIn = async (params) => {
   try {
     const response = await clientApi.post('auth/sign_in', params);
 
-    // 認証情報をクッキーに保存
     const { accessToken, client, uid } = response.headers;
     Cookies.set('access_token', accessToken, { path: '/' })
     Cookies.set('client', client, { path: '/' });
@@ -24,7 +23,6 @@ export const signIn = async (params) => {
 };
 
 // サインアウト
-
 export const signOut = async () => {
   try {
     await  clientApi.delete('auth/sign_out', {
