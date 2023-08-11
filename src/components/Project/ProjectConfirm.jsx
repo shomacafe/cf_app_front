@@ -1,8 +1,7 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { Grid, Button, Typography, FormControlLabel, Checkbox } from '@material-ui/core';
 import { ProjectDataContext } from './CreateProject';
 import { ReturnDataContext } from './CreateProject';
-import axios from 'axios';
 import clientApi from '../../api/client';
 import Cookies from 'js-cookie';
 import ReactQuill from 'react-quill';
@@ -12,54 +11,61 @@ const ProjectConfirm = ({ handleBack }) => {
   const { projectFormData, imagePreviews, published, setPublished } = useContext(ProjectDataContext);
   const { returnFormData, apiReturnImageFiles, returnImagePreviews } = useContext(ReturnDataContext);
 
-  console.log('API用プロジェクト画像', projectFormData.project_images);
-  console.log('プレビュー用プロジェクト画像', imagePreviews);
-  console.log('API用リターン画像', apiReturnImageFiles);
-  console.log('プレビュー用リターン画像', returnImagePreviews);
-  console.log('プロジェクト情報', projectFormData);
-  console.log('リターン情報', returnFormData);
-  console.log('アクセストークン：',Cookies.get("access_token"));
-
   const formatDate = (date) => {
     return date.toLocaleString('ja-JP', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
   }
 
   const handleConfirm = async () => {
-    console.log(projectFormData.project_images)
     try {
-      const combinedData = {
-        "title": projectFormData.title,
-        "catch_copies": projectFormData.catch_copies,
-        "goal_amount": projectFormData.goal_amount,
-        "start_date": formatDate(projectFormData.start_date),
-        "end_date": formatDate(projectFormData.end_date),
-        "project_images": ['プロジェクト画像'],
-        "description": projectFormData.description,
-        "is_published": published,
-        "returns_attributes": returnFormData.returns.map((returnData, index) => ({
-          "name": returnData.name,
-          "price": returnData.price,
-          "return_image": 'リターン画像',
-          "description": returnData.description,
-          "stock_count": returnData.stock_count,
-        }))
-      }
+      const combinedData = new FormData();
+      combinedData.append('title', projectFormData.title);
+      combinedData.append('goal_amount', projectFormData.goal_amount);
+      combinedData.append('start_date', projectFormData.start_date.toISOString());
+      combinedData.append('end_date', projectFormData.end_date.toISOString());
+      combinedData.append('description', projectFormData.description);
+      combinedData.append('is_published', published);
+
+      projectFormData.catch_copies.forEach((catchCopy) => {
+        combinedData.append('catch_copies[]', catchCopy);
+      })
+
+      projectFormData.project_images.forEach((image) => {
+        combinedData.append('project_images[]', image);
+      })
+
+      returnFormData.returns.forEach((returnData, index) => {
+        combinedData.append(`returns_attributes[${index}][name]`, returnData.name);
+        combinedData.append(`returns_attributes[${index}][price]`, returnData.price);
+        combinedData.append(`returns_attributes[${index}][description]`, returnData.description);
+        combinedData.append(`returns_attributes[${index}][stock_count]`, returnData.stock_count);
+
+        if (apiReturnImageFiles[index]) {
+          combinedData.append(`returns_attributes[${index}][return_image]`, apiReturnImageFiles[index]);
+        }
+      });
+
+      const headers = {
+        'access-token': Cookies.get('access_token'),
+        'client': Cookies.get('client'),
+        'uid': Cookies.get('uid'),
+        'expiry': Cookies.get('expiry'),
+        'token-type': Cookies.get('token-type'),
+      };
 
       const response = await clientApi.post('/projects', combinedData, {
         headers: {
-          'access-token': Cookies.get('access_token'),
-          'client': Cookies.get('client'),
-          'uid': Cookies.get('uid'),
-          'expiry': Cookies.get('expiry'),
-          'token-type': Cookies.get('token-type'),
+          ...headers,
+          'Content-Type': 'multipart/form-data'
         }
-      })
+      });
 
-      console.log('データの送信に成功しました', combinedData);
+      console.log('送るフォームデータ', combinedData);
+      console.log('API レスポンス', response.data);
     } catch (error) {
       console.error('データの送信に失敗しました', error);
     }
-  }
+  };
+
   return (
     <Grid container spacing={10}>
       <Grid item sm={2} />
@@ -91,10 +97,6 @@ const ProjectConfirm = ({ handleBack }) => {
             <h3>終了日</h3>
             <p>{formatDate(projectFormData.end_date)}</p>
           </div>
-          {/* <div>
-            <h3>プロジェクトの説明</h3>
-            <div dangerouslySetInnerHTML={{ __html: projectFormData.description }} style={{ maxWidth: '500px' }} />
-          </div> */}
           <div style={{ marginBottom: '60px' }}>
             <h3>プロジェクトの説明</h3>
             <ReactQuill

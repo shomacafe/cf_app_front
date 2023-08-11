@@ -12,10 +12,12 @@ export const signIn = async (params) => {
     const response = await clientApi.post('auth/sign_in', params);
 
     // 認証情報をクッキーに保存
-    const { accessToken, client, uid } = response.headers;
+    const { accessToken, client, uid, expiry, tokenType } = response.headers;
     Cookies.set('access_token', accessToken, { path: '/' })
     Cookies.set('client', client, { path: '/' });
     Cookies.set('uid', uid, { path: '/' });
+    Cookies.set('expiry', expiry, { path: '/' });
+    Cookies.set('token-type', tokenType, { path: '/' });
 
     return response;
   } catch (error) {
@@ -38,6 +40,8 @@ export const signOut = async () => {
     Cookies.remove('access_token', { pass: '/' })
     Cookies.remove('client', { pass: '/' })
     Cookies.remove('uid', { pass: '/' })
+    Cookies.remove('expiry', { path: '/' });
+    Cookies.remove('token-type', { path: '/' });
   } catch (error) {
     throw error;
   }

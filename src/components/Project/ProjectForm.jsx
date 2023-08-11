@@ -79,26 +79,15 @@ const ProjectForm = ({ handleNext }) => {
     })
   };
 
-  // const quillModules = {
-  //   toolbar: [
-  //     ['bold', 'italic', 'underline', 'strike'],
-  //     [{ header: [1, 2, 3, 4, 5, 6, false] }],
-  //     ['link', 'image'],
-  //     [{ list: 'ordered' }, { list: 'bullet' }],
-  //     [{ align: [] }],
-  //     ['clean'],
-  //   ],
-  // }
-
-  const imageUploadCallback = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        resolve(reader.result);
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
+  const modules = {
+    toolbar: [
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      ['link', 'image'],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      [{ align: [] }],
+      ['clean'],
+    ],
   };
 
   return (
@@ -239,17 +228,7 @@ const ProjectForm = ({ handleNext }) => {
                 }))
               }
               style={{height: '800px'}}
-              modules={{
-                toolbar: [
-                  ['bold', 'italic', 'underline', 'strike'],
-                  [{ header: [1, 2, 3, 4, 5, 6, false] }],
-                  ['link', 'image'],
-                  [{ list: 'ordered' }, { list: 'bullet' }],
-                  [{ align: [] }],
-                  ['clean'],
-                ],
-              }}
-              imageUploadCallback={imageUploadCallback}
+              modules={modules}
             />
           </div>
           <Button type='submit' variant='contained' color='primary'>
