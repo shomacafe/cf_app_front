@@ -1,14 +1,19 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Grid, Button, TextField } from '@material-ui/core';
 import { ProjectDataContext } from './CreateProject';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ja } from 'date-fns/locale';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
-import 'quill/dist/quill.core.css';
-import 'quill/dist/quill.snow.css';
+import { EditorState, convertToRaw, ContentState } from 'draft-js';
+import { Editor } from 'react-draft-wysiwyg';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
+import clientApi from '../../api/client';
+
+// import ReactQuill from 'react-quill';
+// import 'react-quill/dist/quill.snow.css';
+// import 'quill/dist/quill.core.css';
+// import 'quill/dist/quill.snow.css';
 
 const ProjectForm = ({ handleNext }) => {
   const {
@@ -29,6 +34,9 @@ const ProjectForm = ({ handleNext }) => {
     defaultValues: projectFormData,
   });
   const watchedFields = watch()
+  const [editorState, setEditorState] = useState(() =>
+    EditorState.createEmpty()
+  );
 
   useEffect(() => {
     setProjectFormData((prevProjectFormData) => ({
@@ -38,12 +46,21 @@ const ProjectForm = ({ handleNext }) => {
   }, [apiImageFiles, setProjectFormData])
 
   const onSubmit = (data) => {
-    data.description = projectFormData.description;
+    data.description = convertToRaw(editorState.getCurrentContent());
     data.project_images = apiImageFiles;
-    setProjectFormData(data)
-    console.log('プロジェクトフォーム「次へ」押下時', projectFormData)
+
+    setProjectFormData(data);
     handleNext();
+    console.log('プロジェクトフォーム「次へ」押下時', projectFormData)
   };
+
+  // const onSubmit = (data) => {
+  //   data.description = projectFormData.description;
+  //   data.project_images = apiImageFiles;
+  //   setProjectFormData(data)
+  //   handleNext();
+  //   console.log('プロジェクトフォーム「次へ」押下時', data)
+  // };
 
   // キャッチコピーのフィールド追加
   const addCatchCopyField = () => {
@@ -79,15 +96,27 @@ const ProjectForm = ({ handleNext }) => {
     })
   };
 
-  const modules = {
-    toolbar: [
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ header: [1, 2, 3, 4, 5, 6, false] }],
-      ['link', 'image'],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      [{ align: [] }],
-      ['clean'],
-    ],
+  const handleImageUpload = async (file) => {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const response = await clientApi.post('/upload_image', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      if (response.status === 200) {
+        console.log('urlが帰ってきたお', response.data)
+        const imageUrl = response.data;
+        return { data: { link: imageUrl } };
+      } else {
+        throw new Error('画像のアップロードに失敗しました');
+      }
+    } catch (error) {
+      throw new Error('画像のアップロードに失敗しました');
+    }
   };
 
   return (
@@ -95,6 +124,7 @@ const ProjectForm = ({ handleNext }) => {
       <Grid item sm={2} />
       <Grid item lg={8} sm={8}>
         <form onSubmit={handleSubmit(onSubmit)}>
+          {/* その他のフォーム */}
           {/* タイトル */}
           <Controller
             name="title"
@@ -215,20 +245,23 @@ const ProjectForm = ({ handleNext }) => {
               <button type='button' onClick={() => removeProjectImage(index)}>削除</button>
             </div>
           ))}
+
           {/* プロジェクト説明 */}
-          <div style={{ marginBottom: '60px' }}>
+          <div className="editor">
             <h3>プロジェクトの説明</h3>
-            <ReactQuill
-              theme='snow'
-              value={projectFormData.description}
-              onChange={(value) =>
-                setProjectFormData((prevProjectFormData) => ({
-                  ...prevProjectFormData,
-                  description: value,
-                }))
-              }
-              style={{height: '800px'}}
-              modules={modules}
+            <Editor
+              editorState={editorState}
+              onEditorStateChange={setEditorState}
+              wrapperClassName='demo-wrapper'
+              editorClassName='demo-editor'
+              toolbar={{
+                image: {
+                  uploadCallback: handleImageUpload
+                }
+              }}
+              localization={{
+                locale: "ja",
+              }}
             />
           </div>
           <Button type='submit' variant='contained' color='primary'>

@@ -4,8 +4,7 @@ import { ProjectDataContext } from './CreateProject';
 import { ReturnDataContext } from './CreateProject';
 import clientApi from '../../api/client';
 import Cookies from 'js-cookie';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import { convertToRaw } from 'draft-js';
 
 const ProjectConfirm = ({ handleBack }) => {
   const { projectFormData, imagePreviews, published, setPublished } = useContext(ProjectDataContext);
@@ -15,6 +14,9 @@ const ProjectConfirm = ({ handleBack }) => {
     return date.toLocaleString('ja-JP', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
   }
 
+  console.log('プロジェクト情報', projectFormData);
+  console.log('プロジェクトの説明', projectFormData.description);
+
   const handleConfirm = async () => {
     try {
       const combinedData = new FormData();
@@ -22,7 +24,9 @@ const ProjectConfirm = ({ handleBack }) => {
       combinedData.append('goal_amount', projectFormData.goal_amount);
       combinedData.append('start_date', projectFormData.start_date.toISOString());
       combinedData.append('end_date', projectFormData.end_date.toISOString());
-      combinedData.append('description', projectFormData.description);
+
+      combinedData.append('description', JSON.stringify(projectFormData.description));
+
       combinedData.append('is_published', published);
 
       projectFormData.catch_copies.forEach((catchCopy) => {
@@ -99,14 +103,7 @@ const ProjectConfirm = ({ handleBack }) => {
           </div>
           <div style={{ marginBottom: '60px' }}>
             <h3>プロジェクトの説明</h3>
-            <ReactQuill
-              theme="snow"
-              value={projectFormData.description}
-              readOnly
-              modules={{
-                toolbar: false,
-              }}
-            />
+
           </div>
         </section>
         <Typography variant="h4">リターン情報</Typography>
