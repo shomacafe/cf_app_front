@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Grid, Button, TextField } from '@material-ui/core';
-import { ProjectDataContext } from './CreateProject';
+import { ProjectDataContext } from '../../contexts/ProjectContext';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ja } from 'date-fns/locale';
@@ -27,7 +27,6 @@ const ProjectForm = ({ handleNext }) => {
     formState: { errors },
     setValue,
     watch,
-    register,
   } = useForm({
     defaultValues: projectFormData,
   });
@@ -117,7 +116,6 @@ const ProjectForm = ({ handleNext }) => {
       });
 
       if (response.status === 200) {
-        console.log('urlが返ってきました：', response.data)
         const imageUrl = response.data;
         return { data: { link: imageUrl } };
       } else {
