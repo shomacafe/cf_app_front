@@ -36,11 +36,6 @@ const CreateProject = () => {
   const [editorState, setEditorState] = useState(() => EditorState.createEmpty());
   const [published, setPublished] = useState(false);
 
-
-  useEffect(() => {
-    console.log('formDataが更新されました:', projectFormData);
-  }, [projectFormData]);
-
   const getSteps = () => {
     return ['プロジェクト情報の入力', 'リターンの追加', '確認'];
   }

@@ -47,11 +47,7 @@ const ProjectForm = ({ handleNext }) => {
     const isDescriptionEmpty = contentState.getPlainText().trim() === '';
     const isImageEmpty = apiImageFiles.length === 0;
 
-    console.log('isDescriptionEmpty:',isDescriptionEmpty);
-    console.log('isImageEmpty:',isImageEmpty);
-
     if (isDescriptionEmpty) {
-      console.log('エラー')
       setDescriptionError('プロジェクト説明は必須です')
     } else {
       setDescriptionError('');

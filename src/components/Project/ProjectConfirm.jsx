@@ -13,16 +13,9 @@ const ProjectConfirm = ({ handleBack }) => {
   const contentState = convertFromRaw(projectFormData.description);
   const projectDescriptionHtml = draftToHtml(projectFormData.description);
 
-  console.log('コンバートしたプロジェクト説明:', contentState)
-  console.log('projectDescriptionHtml：', projectDescriptionHtml)
-  console.log('リターン画像API用', apiReturnImageFiles)
-
   const formatDate = (date) => {
     return date.toLocaleString('ja-JP', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
   }
-
-  console.log('プロジェクト情報', projectFormData);
-  console.log('プロジェクトの説明', projectFormData.description);
 
   const handleConfirm = async () => {
     const confirmResult = window.confirm('プロジェクトを登録してよろしいですか？');
@@ -73,7 +66,6 @@ const ProjectConfirm = ({ handleBack }) => {
           }
         });
 
-        console.log('送るフォームデータ', combinedData);
         console.log('API レスポンス', response.data);
       } catch (error) {
         console.error('データの送信に失敗しました', error);
