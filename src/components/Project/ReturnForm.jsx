@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useForm, useFieldArray, Controller, useWatch } from 'react-hook-form'
+import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import { Grid, Button, TextField, Tooltip } from '@material-ui/core';
 import { ReturnDataContext } from './CreateProject';
 
@@ -18,6 +18,7 @@ const ReturnForm = ({ handleNext, handleBack }) => {
     handleSubmit,
     formState: {errors},
     watch,
+    register,
   } = useForm({
     defaultValues: returnFormData,
   });
@@ -111,7 +112,12 @@ const ReturnForm = ({ handleNext, handleBack }) => {
             {/* リターン画像 */}
             <div>
               <h3>リターンの画像</h3>
-              <input type='file' onChange={(e) => addReturnImage(e, index)} />
+              <input
+                type='file'
+                onChange={(e) => addReturnImage(e, index)}
+                {...register(`returns.${index}.return_image`, { required: 'リターン画像を選択してください' })}
+              />
+              {errors?.returns?.[index]?.return_image && <p style={{ color: 'red' }}>{errors?.returns?.[index]?.return_image.message}</p>}
             </div>
             {returnImagePreviews[index] && (
               <div>
@@ -135,8 +141,8 @@ const ReturnForm = ({ handleNext, handleBack }) => {
                       multiline
                       variant="outlined"
                       placeholder="リターンの説明を入力してください。"
-                      error={!!errors?.returns?.[index]?.price}
-                      helperText={errors?.returns?.[index]?.price?.message}
+                      error={!!errors?.returns?.[index]?.description}
+                      helperText={errors?.returns?.[index]?.description?.message}
                     />
                   </Tooltip>
                 )}

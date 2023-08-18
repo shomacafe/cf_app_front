@@ -3,6 +3,7 @@ import { Stepper, Step, StepLabel } from '@material-ui/core'
 import ProjectForm from './ProjectForm'
 import ReturnForm from './ReturnForm'
 import ProjectConfirm from './ProjectConfirm'
+import { EditorState } from 'draft-js';
 
 export const ProjectDataContext = createContext();
 export const ReturnDataContext = createContext();
@@ -12,7 +13,7 @@ const CreateProject = () => {
   const [projectFormData, setProjectFormData] = useState({
     title: '',
     catch_copies: [''],
-    goal_amount: 0,
+    goal_amount: '',
     start_date: '',
     end_date: '',
     project_images: [''],
@@ -23,8 +24,8 @@ const CreateProject = () => {
       {
         name: '',
         description: '',
-        price: 0,
-        stock_count: 0
+        price: '',
+        stock_count: ''
       }
     ]
   });
@@ -32,6 +33,7 @@ const CreateProject = () => {
   const [apiImageFiles, setApiImageFiles] = useState([]);
   const [returnImagePreviews, setReturnImagePreviews] = useState([]);
   const [apiReturnImageFiles, setAipReturnImageFiles] = useState([]);
+  const [editorState, setEditorState] = useState(() => EditorState.createEmpty());
   const [published, setPublished] = useState(false);
 
 
@@ -40,7 +42,7 @@ const CreateProject = () => {
   }, [projectFormData]);
 
   const getSteps = () => {
-    return ['プロジェクト登録', 'リターン登録', '確認'];
+    return ['プロジェクト情報の入力', 'リターンの追加', '確認'];
   }
   const steps = getSteps();
 
@@ -84,6 +86,8 @@ const CreateProject = () => {
         setApiImageFiles,
         published,
         setPublished,
+        editorState,
+        setEditorState,
       }}>
         <ReturnDataContext.Provider value={{
         returnFormData,

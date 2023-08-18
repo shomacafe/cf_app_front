@@ -5,15 +5,10 @@ import { ProjectDataContext } from './CreateProject';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ja } from 'date-fns/locale';
-import { EditorState, convertToRaw, ContentState } from 'draft-js';
+import { convertToRaw } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 import clientApi from '../../api/client';
-
-// import ReactQuill from 'react-quill';
-// import 'react-quill/dist/quill.snow.css';
-// import 'quill/dist/quill.core.css';
-// import 'quill/dist/quill.snow.css';
 
 const ProjectForm = ({ handleNext }) => {
   const {
@@ -23,6 +18,8 @@ const ProjectForm = ({ handleNext }) => {
     setImagePreviews,
     apiImageFiles,
     setApiImageFiles,
+    editorState,
+    setEditorState,
   } = useContext(ProjectDataContext);
   const {
     control,
@@ -30,13 +27,13 @@ const ProjectForm = ({ handleNext }) => {
     formState: { errors },
     setValue,
     watch,
+    register,
   } = useForm({
     defaultValues: projectFormData,
   });
   const watchedFields = watch()
-  const [editorState, setEditorState] = useState(() =>
-    EditorState.createEmpty()
-  );
+  const [descriptionError, setDescriptionError] = useState('');
+  const [imageError, setImageError] = useState('');
 
   useEffect(() => {
     setProjectFormData((prevProjectFormData) => ({
@@ -46,21 +43,37 @@ const ProjectForm = ({ handleNext }) => {
   }, [apiImageFiles, setProjectFormData])
 
   const onSubmit = (data) => {
-    data.description = convertToRaw(editorState.getCurrentContent());
+    const contentState = editorState.getCurrentContent();
+    const isDescriptionEmpty = contentState.getPlainText().trim() === '';
+    const isImageEmpty = apiImageFiles.length === 0;
+
+    console.log('isDescriptionEmpty:',isDescriptionEmpty);
+    console.log('isImageEmpty:',isImageEmpty);
+
+    if (isDescriptionEmpty) {
+      console.log('エラー')
+      setDescriptionError('プロジェクト説明は必須です')
+    } else {
+      setDescriptionError('');
+    }
+
+    if (isImageEmpty) {
+      setImageError('プロジェクト画像を選択してください');
+    } else {
+      setImageError('');
+    }
+
+    if (isDescriptionEmpty || isImageEmpty) {
+      return;
+    }
+
+    data.description = convertToRaw(contentState);
     data.project_images = apiImageFiles;
 
     setProjectFormData(data);
     handleNext();
     console.log('プロジェクトフォーム「次へ」押下時', projectFormData)
   };
-
-  // const onSubmit = (data) => {
-  //   data.description = projectFormData.description;
-  //   data.project_images = apiImageFiles;
-  //   setProjectFormData(data)
-  //   handleNext();
-  //   console.log('プロジェクトフォーム「次へ」押下時', data)
-  // };
 
   // キャッチコピーのフィールド追加
   const addCatchCopyField = () => {
@@ -108,7 +121,7 @@ const ProjectForm = ({ handleNext }) => {
       });
 
       if (response.status === 200) {
-        console.log('urlが帰ってきたお', response.data)
+        console.log('urlが返ってきました：', response.data)
         const imageUrl = response.data;
         return { data: { link: imageUrl } };
       } else {
@@ -124,7 +137,6 @@ const ProjectForm = ({ handleNext }) => {
       <Grid item sm={2} />
       <Grid item lg={8} sm={8}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          {/* その他のフォーム */}
           {/* タイトル */}
           <Controller
             name="title"
@@ -204,6 +216,7 @@ const ProjectForm = ({ handleNext }) => {
           <Controller
             name="start_date"
             control={control}
+            rules={{ required: '開始日を選択してください' }}
             render={({field}) => (
               <div>
                 <h3>開始日</h3>
@@ -214,6 +227,7 @@ const ProjectForm = ({ handleNext }) => {
                   dateFormat="yyyy/MM/dd"
                   placeholderText="開始日を選択してください"
                 />
+                {errors.start_date && <p style={{ color: 'red' }}>{errors.start_date.message}</p>}
               </div>
             )}
           />
@@ -221,6 +235,7 @@ const ProjectForm = ({ handleNext }) => {
           <Controller
             name="end_date"
             control={control}
+            rules={{ required: '終了日を選択してください' }}
             render={({field}) => (
               <div>
                 <h3>終了日</h3>
@@ -231,13 +246,21 @@ const ProjectForm = ({ handleNext }) => {
                   dateFormat="yyyy/MM/dd"
                   placeholderText="終了日を選択してください"
                 />
+                {errors.end_date && <p style={{ color: 'red' }}>{errors.end_date.message}</p>}
               </div>
             )}
           />
-          {/* プロジェクト画像 roject_images */}
+          {/* プロジェクト画像 project_images */}
           <div>
             <h3>プロジェクト画像</h3>
-            <input type='file' multiple onChange={addProjectImage} />
+            {imageError && <p style={{ color: 'red' }}>{imageError}</p>}
+            <input
+              type='file'
+              multiple
+              // {...register('project_images', { required: '少なくとも1つのプロジェクト画像が必要です' })}
+              onChange={addProjectImage}
+            />
+            {errors.project_images && <p style={{ color: 'red' }}>{errors.project_images.message}</p>}
           </div>
           {imagePreviews.map((imageUrl, index) => (
             <div key={index}>
@@ -245,24 +268,37 @@ const ProjectForm = ({ handleNext }) => {
               <button type='button' onClick={() => removeProjectImage(index)}>削除</button>
             </div>
           ))}
-
-          {/* プロジェクト説明 */}
-          <div className="editor">
+          {/* プロジェクト説明 description */}
+          <div className="editor-container">
             <h3>プロジェクトの説明</h3>
-            <Editor
-              editorState={editorState}
-              onEditorStateChange={setEditorState}
-              wrapperClassName='demo-wrapper'
-              editorClassName='demo-editor'
-              toolbar={{
-                image: {
-                  uploadCallback: handleImageUpload
-                }
-              }}
-              localization={{
-                locale: "ja",
-              }}
-            />
+            {descriptionError && <p style={{ color: 'red' }}>{descriptionError}</p>}
+            <div className="editor-content">
+              <Editor
+                editorState={editorState}
+                onEditorStateChange={setEditorState}
+                wrapperClassName='wrapper-class'
+                editorClassName='editor-class'
+                toolbar={{
+                  options: ['inline', 'blockType', 'fontSize', 'list', 'textAlign', 'colorPicker', 'link', 'history', 'image'],
+                  inline: { inDropdown: true },
+                  list: { inDropdown: true },
+                  textAlign: { inDropdown: true },
+                  link: { inDropdown: true },
+                  history: { inDropdown: true },
+                  blockType: { options: ['Normal', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'Blockquote', 'Code'], },
+                  image: {
+                    uploadCallback: handleImageUpload,
+                    alt: { present: true, mandatory: false },
+                    previewImage: true,
+                    inputAccept: 'image/gif,image/jpeg,image/jpg,image/png,image/svg',
+                    urlEnabled: false,
+                  }
+                }}
+                localization={{
+                  locale: "ja",
+                }}
+              />
+            </div>
           </div>
           <Button type='submit' variant='contained' color='primary'>
             次へ

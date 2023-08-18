@@ -4,11 +4,18 @@ import { ProjectDataContext } from './CreateProject';
 import { ReturnDataContext } from './CreateProject';
 import clientApi from '../../api/client';
 import Cookies from 'js-cookie';
-import { convertToRaw } from 'draft-js';
+import { convertFromRaw } from 'draft-js';
+import draftToHtml from 'draftjs-to-html';
 
 const ProjectConfirm = ({ handleBack }) => {
   const { projectFormData, imagePreviews, published, setPublished } = useContext(ProjectDataContext);
   const { returnFormData, apiReturnImageFiles, returnImagePreviews } = useContext(ReturnDataContext);
+  const contentState = convertFromRaw(projectFormData.description);
+  const projectDescriptionHtml = draftToHtml(projectFormData.description);
+
+  console.log('コンバートしたプロジェクト説明:', contentState)
+  console.log('projectDescriptionHtml：', projectDescriptionHtml)
+  console.log('リターン画像API用', apiReturnImageFiles)
 
   const formatDate = (date) => {
     return date.toLocaleString('ja-JP', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -18,55 +25,59 @@ const ProjectConfirm = ({ handleBack }) => {
   console.log('プロジェクトの説明', projectFormData.description);
 
   const handleConfirm = async () => {
-    try {
-      const combinedData = new FormData();
-      combinedData.append('title', projectFormData.title);
-      combinedData.append('goal_amount', projectFormData.goal_amount);
-      combinedData.append('start_date', projectFormData.start_date.toISOString());
-      combinedData.append('end_date', projectFormData.end_date.toISOString());
+    const confirmResult = window.confirm('プロジェクトを登録してよろしいですか？');
 
-      combinedData.append('description', JSON.stringify(projectFormData.description));
+    if (confirmResult) {
+      try {
+        const combinedData = new FormData();
+        combinedData.append('title', projectFormData.title);
+        combinedData.append('goal_amount', projectFormData.goal_amount);
+        combinedData.append('start_date', projectFormData.start_date.toISOString());
+        combinedData.append('end_date', projectFormData.end_date.toISOString());
 
-      combinedData.append('is_published', published);
+        combinedData.append('description', JSON.stringify(projectFormData.description));
 
-      projectFormData.catch_copies.forEach((catchCopy) => {
-        combinedData.append('catch_copies[]', catchCopy);
-      })
+        combinedData.append('is_published', published);
 
-      projectFormData.project_images.forEach((image) => {
-        combinedData.append('project_images[]', image);
-      })
+        projectFormData.catch_copies.forEach((catchCopy) => {
+          combinedData.append('catch_copies[]', catchCopy);
+        })
 
-      returnFormData.returns.forEach((returnData, index) => {
-        combinedData.append(`returns_attributes[${index}][name]`, returnData.name);
-        combinedData.append(`returns_attributes[${index}][price]`, returnData.price);
-        combinedData.append(`returns_attributes[${index}][description]`, returnData.description);
-        combinedData.append(`returns_attributes[${index}][stock_count]`, returnData.stock_count);
+        projectFormData.project_images.forEach((image) => {
+          combinedData.append('project_images[]', image);
+        })
 
-        if (apiReturnImageFiles[index]) {
-          combinedData.append(`returns_attributes[${index}][return_image]`, apiReturnImageFiles[index]);
-        }
-      });
+        returnFormData.returns.forEach((returnData, index) => {
+          combinedData.append(`returns_attributes[${index}][name]`, returnData.name);
+          combinedData.append(`returns_attributes[${index}][price]`, returnData.price);
+          combinedData.append(`returns_attributes[${index}][description]`, returnData.description);
+          combinedData.append(`returns_attributes[${index}][stock_count]`, returnData.stock_count);
 
-      const headers = {
-        'access-token': Cookies.get('access_token'),
-        'client': Cookies.get('client'),
-        'uid': Cookies.get('uid'),
-        'expiry': Cookies.get('expiry'),
-        'token-type': Cookies.get('token-type'),
-      };
+          if (apiReturnImageFiles[index]) {
+            combinedData.append(`returns_attributes[${index}][return_image]`, apiReturnImageFiles[index]);
+          }
+        });
 
-      const response = await clientApi.post('/projects', combinedData, {
-        headers: {
-          ...headers,
-          'Content-Type': 'multipart/form-data'
-        }
-      });
+        const headers = {
+          'access-token': Cookies.get('access_token'),
+          'client': Cookies.get('client'),
+          'uid': Cookies.get('uid'),
+          'expiry': Cookies.get('expiry'),
+          'token-type': Cookies.get('token-type'),
+        };
 
-      console.log('送るフォームデータ', combinedData);
-      console.log('API レスポンス', response.data);
-    } catch (error) {
-      console.error('データの送信に失敗しました', error);
+        const response = await clientApi.post('/projects', combinedData, {
+          headers: {
+            ...headers,
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+
+        console.log('送るフォームデータ', combinedData);
+        console.log('API レスポンス', response.data);
+      } catch (error) {
+        console.error('データの送信に失敗しました', error);
+      }
     }
   };
 
@@ -103,7 +114,7 @@ const ProjectConfirm = ({ handleBack }) => {
           </div>
           <div style={{ marginBottom: '60px' }}>
             <h3>プロジェクトの説明</h3>
-
+            <div dangerouslySetInnerHTML={{ __html: projectDescriptionHtml }} />
           </div>
         </section>
         <Typography variant="h4">リターン情報</Typography>
