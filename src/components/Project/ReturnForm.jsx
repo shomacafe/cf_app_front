@@ -22,6 +22,8 @@ const ReturnForm = ({ handleNext, handleBack }) => {
     defaultValues: returnFormData,
   });
   const watchedFields = watch();
+  const [returnImageErrors, setReturnImageErrors] = useState([]);
+
 
   useEffect(() => {
     setReturnFormData((prevReturnFormData) => ({
@@ -43,6 +45,18 @@ const ReturnForm = ({ handleNext, handleBack }) => {
   }, [fields, setReturnFormData]);
 
   const onSubmit = (data) => {
+    const newErrors = Array(fields.length).fill('');
+    fields.forEach((_, index) => {
+      if (!returnImagePreviews[index]) {
+        newErrors[index] = 'リターン画像を選択してください';
+      }
+    });
+    setReturnImageErrors(newErrors);
+
+    if (newErrors.some((error) => error !== '')) {
+      return;
+    }
+
     handleNext()
     console.log('リターンフォーム「次へ」押下時）：', returnFormData, apiReturnImageFiles);
   }
@@ -68,6 +82,12 @@ const ReturnForm = ({ handleNext, handleBack }) => {
       newReturnImagePreviews[index] = imageUrl;
       return newReturnImagePreviews;
     });
+
+    setReturnImageErrors((prevErrors) => {
+      const newErrors = [...prevErrors];
+      newErrors[index] = '';
+      return newErrors;
+    })
   };
 
   const removeReturnImage = (index) => {
@@ -111,13 +131,11 @@ const ReturnForm = ({ handleNext, handleBack }) => {
             {/* リターン画像 */}
             <div>
               <h3>リターンの画像</h3>
-              <input
-                type='file'
-                onChange={(e) => addReturnImage(e, index)}
-                {...register(`returns.${index}.return_image`, { required: 'リターン画像を選択してください' })}
-              />
-              {errors?.returns?.[index]?.return_image && <p style={{ color: 'red' }}>{errors?.returns?.[index]?.return_image.message}</p>}
+              <input type='file' onChange={(e) => addReturnImage(e, index)} />
             </div>
+            {returnImageErrors[index] && (
+              <p style={{ color: 'red' }}>{returnImageErrors[index]}</p>
+            )}
             {returnImagePreviews[index] && (
               <div>
                 <img src={returnImagePreviews[index]} alt={`プレビュー${index + 1}`} style={{ width: '200px', height: '200px' }} />

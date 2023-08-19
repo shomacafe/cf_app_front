@@ -251,7 +251,6 @@ const ProjectForm = ({ handleNext }) => {
             <input
               type='file'
               multiple
-              // {...register('project_images', { required: '少なくとも1つのプロジェクト画像が必要です' })}
               onChange={addProjectImage}
             />
             {errors.project_images && <p style={{ color: 'red' }}>{errors.project_images.message}</p>}
