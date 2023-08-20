@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Grid, Button, Typography, FormControlLabel, Checkbox } from '@material-ui/core';
-import { ProjectDataContext } from './CreateProject';
-import { ReturnDataContext } from './CreateProject';
+import { ProjectDataContext } from '../../contexts/ProjectContext';
+import { ReturnDataContext } from '../../contexts/ProjectContext';
 import clientApi from '../../api/client';
 import Cookies from 'js-cookie';
 import { convertFromRaw } from 'draft-js';

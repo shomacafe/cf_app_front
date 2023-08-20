@@ -1,40 +1,12 @@
-import React, { createContext, useState, useEffect } from 'react'
+import React, { createContext, useState } from 'react'
 import { Stepper, Step, StepLabel } from '@material-ui/core'
 import ProjectForm from './ProjectForm'
 import ReturnForm from './ReturnForm'
 import ProjectConfirm from './ProjectConfirm'
-import { EditorState } from 'draft-js';
-
-export const ProjectDataContext = createContext();
-export const ReturnDataContext = createContext();
+import { ProjectDataProvider, ReturnDataProvider } from '../../contexts/ProjectContext';
 
 const CreateProject = () => {
   const [activeStep, setActiveStep] = useState(0);
-  const [projectFormData, setProjectFormData] = useState({
-    title: '',
-    catch_copies: [''],
-    goal_amount: '',
-    start_date: '',
-    end_date: '',
-    project_images: [''],
-    description: '',
-  });
-  const [returnFormData, setReturnFormData] = useState({
-    returns: [
-      {
-        name: '',
-        description: '',
-        price: '',
-        stock_count: ''
-      }
-    ]
-  });
-  const [imagePreviews, setImagePreviews] = useState([]);
-  const [apiImageFiles, setApiImageFiles] = useState([]);
-  const [returnImagePreviews, setReturnImagePreviews] = useState([]);
-  const [apiReturnImageFiles, setAipReturnImageFiles] = useState([]);
-  const [editorState, setEditorState] = useState(() => EditorState.createEmpty());
-  const [published, setPublished] = useState(false);
 
   const getSteps = () => {
     return ['プロジェクト情報の入力', 'リターンの追加', '確認'];
@@ -72,29 +44,11 @@ const CreateProject = () => {
           </Step>
         ))}
       </Stepper>
-      <ProjectDataContext.Provider value={{
-        projectFormData,
-        setProjectFormData,
-        imagePreviews,
-        setImagePreviews,
-        apiImageFiles,
-        setApiImageFiles,
-        published,
-        setPublished,
-        editorState,
-        setEditorState,
-      }}>
-        <ReturnDataContext.Provider value={{
-        returnFormData,
-        setReturnFormData,
-        apiReturnImageFiles,
-        setAipReturnImageFiles,
-        returnImagePreviews,
-        setReturnImagePreviews
-        }}>
+      <ProjectDataProvider>
+        <ReturnDataProvider>
           {renderStepContent(activeStep)}
-        </ReturnDataContext.Provider>
-      </ProjectDataContext.Provider>
+        </ReturnDataProvider>
+      </ProjectDataProvider>
     </>
   )
 }
