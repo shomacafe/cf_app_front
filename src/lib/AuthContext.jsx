@@ -1,42 +1,44 @@
 import React, { createContext, useState, useEffect } from 'react'
 import { getCurrentUser } from '../api/auth';
 
-const AuthContext = createContext();
+export const AuthContext = createContext();
 
-const AuthProvider = ({children}) => {
+export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
-  const [authenticated, setAuthenticated] = useState(false);
-  const [uid, setUid] = useState('');
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState(undefined);
+
+  const handleGetCurrentUser = async () => {
+    try {
+      const response = await getCurrentUser();
+
+      if (response?.data.isLogin === true) {
+        setIsSignedIn(true);
+        setCurrentUser(response?.data.data)
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    setLoading(false);
+  };
 
   useEffect(() => {
-    const checkAuthentication = async () => {
-      try {
-        const user = await getCurrentUser();
-        setAuthenticated(!!user);
-
-        if (user && user.data.id) {
-          setUid(user.data.uid);
-        }
-      } catch (error) {
-        setAuthenticated(false);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAuthentication();
-    console.log('ログイン状態:', authenticated);
-  }, [authenticated]);
-
-  if (loading) {
-    return <div>ロード中</div>
-  }
+    handleGetCurrentUser();
+  }, [setCurrentUser]);
 
   return (
-    <AuthContext.Provider value={{ authenticated, setAuthenticated, uid, setUid }}>
+    <AuthContext.Provider
+      value={{
+        loading,
+        setLoading,
+        isSignedIn,
+        setIsSignedIn,
+        currentUser,
+        setCurrentUser,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )
 }
-
-export {AuthContext, AuthProvider};
