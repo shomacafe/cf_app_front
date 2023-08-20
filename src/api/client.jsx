@@ -2,7 +2,7 @@ import applyCaseMiddleware from 'axios-case-converter'
 import axios from 'axios'
 
 const options = {
-  ignoreHeaders: false
+  ignoreHeaders: true
 }
 
 const clientApi = applyCaseMiddleware(axios.create({

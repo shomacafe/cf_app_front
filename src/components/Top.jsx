@@ -1,16 +1,24 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
+import { AuthContext } from '../lib/AuthContext'
 
 const Top = () => {
+  const { isSignedIn, currentUser } = useContext(AuthContext);
+
   return (
     <>
       <h1>トップページ</h1>
-      <div>
-        新規登録は<Link to='/signup_form'>こちら</Link>
-      </div>
-      <div>
-        ログインは<Link to={`/signin_form`}>こちら</Link>
-      </div>
+      {
+        isSignedIn && currentUser ? (
+          <>
+            <h1>サインインしています</h1>
+            <h2>メールアドレス: {currentUser?.email}</h2>
+            <h2>名前: {currentUser?.name}</h2>
+          </>
+        ) : (
+          <h1>サインインしていません。</h1>
+        )
+      }
       <div>
         <Link to={`/new/project`}>プロジェクトをはじめる</Link>
       </div>
