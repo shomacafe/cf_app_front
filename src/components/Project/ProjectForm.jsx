@@ -9,6 +9,11 @@ import { convertToRaw } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 import clientApi from '../../api/client';
+import createImagePlugin from 'draft-js-image-plugin';
+import { resizeProjectImages } from './ResizeProjectImages';
+
+const imagePlugin = createImagePlugin();
+const plugins = [imagePlugin];
 
 const ProjectForm = ({ handleNext }) => {
   const {
@@ -27,19 +32,18 @@ const ProjectForm = ({ handleNext }) => {
     formState: { errors },
     setValue,
     watch,
+    reset,
   } = useForm({
     defaultValues: projectFormData,
   });
   const watchedFields = watch()
   const [descriptionError, setDescriptionError] = useState('');
   const [imageError, setImageError] = useState('');
+  const [imageUrls, setImageUrls] = useState([]);
 
   useEffect(() => {
-    setProjectFormData((prevProjectFormData) => ({
-      ...prevProjectFormData,
-      project_images: apiImageFiles,
-    }));
-  }, [apiImageFiles, setProjectFormData])
+    reset(projectFormData);
+  }, [projectFormData, reset]);
 
   const onSubmit = (data) => {
     const contentState = editorState.getCurrentContent();
@@ -80,17 +84,19 @@ const ProjectForm = ({ handleNext }) => {
   };
 
   // 画像選択時のハンドラー
-  const addProjectImage = (e) => {
+  const addProjectImage = async (e) => {
     const files = e.target.files;
-    const imageUrls = [];
+    const resizedApiImagePreviews = [];
+    const resizedApiImageFiles = [];
 
     for (let i = 0; i < files.length; i++) {
-      const imageUrl = URL.createObjectURL(files[i]);
-      imageUrls.push(imageUrl);
+      const resizedImage = await resizeProjectImages(files[i], 300, 200);
+      resizedApiImagePreviews.push(URL.createObjectURL(resizedImage));
+      resizedApiImageFiles.push(await resizeProjectImages(files[i], 900, 600));
     }
 
-    setImagePreviews((prevImagePreviews) => [...prevImagePreviews, ...imageUrls]);
-    setApiImageFiles((prevApiImageFiles) => [...prevApiImageFiles, ...files]);
+    setImagePreviews((prevImagePreviews) => [...prevImagePreviews, ...resizedApiImagePreviews]);
+    setApiImageFiles((prevApiImageFiles) => [...prevApiImageFiles, ...resizedApiImageFiles]);
   };
 
   // 画像削除時のハンドラー
@@ -104,27 +110,28 @@ const ProjectForm = ({ handleNext }) => {
     })
   };
 
-  const handleImageUpload = async (file) => {
-    const formData = new FormData();
-    formData.append('image', file);
+  // const handleImageUpload = async (file) => {
+  //   const formData = new FormData();
+  //   formData.append('image', file);
+  //   // formData.append('rich_text_editor_upload', true);
 
-    try {
-      const response = await clientApi.post('/upload_image', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
+  //   try {
+  //     const response = await clientApi.post('/upload_rich_text_image', formData, {
+  //       headers: {
+  //         'Content-Type': 'multipart/form-data'
+  //       }
+  //     });
 
-      if (response.status === 200) {
-        const imageUrl = response.data;
-        return { data: { link: imageUrl } };
-      } else {
-        throw new Error('画像のアップロードに失敗しました');
-      }
-    } catch (error) {
-      throw new Error('画像のアップロードに失敗しました');
-    }
-  };
+  //     if (response.status === 200) {
+  //       const imageUrl = response.data;
+  //       return { data: { link: imageUrl } };
+  //     } else {
+  //       throw new Error('画像のアップロードに失敗しました');
+  //     }
+  //   } catch (error) {
+  //     throw new Error('画像のアップロードに失敗しました');
+  //   }
+  // };
 
   return (
     <Grid container spacing={10}>
@@ -220,6 +227,7 @@ const ProjectForm = ({ handleNext }) => {
                   locale={ja}
                   dateFormat="yyyy/MM/dd"
                   placeholderText="開始日を選択してください"
+                  minDate={new Date()}
                 />
                 {errors.start_date && <p style={{ color: 'red' }}>{errors.start_date.message}</p>}
               </div>
@@ -239,6 +247,7 @@ const ProjectForm = ({ handleNext }) => {
                   locale={ja}
                   dateFormat="yyyy/MM/dd"
                   placeholderText="終了日を選択してください"
+                  minDate={watchedFields.start_date}
                 />
                 {errors.end_date && <p style={{ color: 'red' }}>{errors.end_date.message}</p>}
               </div>
@@ -257,7 +266,7 @@ const ProjectForm = ({ handleNext }) => {
           </div>
           {imagePreviews.map((imageUrl, index) => (
             <div key={index}>
-              <img src={imageUrl} alt={`プレビュー${index + 1}`} style={{ width: '200px', height: '200px' }} />
+              <img src={imageUrl} alt={`プレビュー${index + 1}`} style={{ width: '300px'}} />
               <button type='button' onClick={() => removeProjectImage(index)}>削除</button>
             </div>
           ))}
@@ -271,21 +280,19 @@ const ProjectForm = ({ handleNext }) => {
                 onEditorStateChange={setEditorState}
                 wrapperClassName='wrapper-class'
                 editorClassName='editor-class'
+                plugins={plugins}
                 toolbar={{
-                  options: ['inline', 'blockType', 'fontSize', 'list', 'textAlign', 'colorPicker', 'link', 'history', 'image'],
+                  options: ['inline', 'blockType', 'fontSize', 'list', 'textAlign', 'colorPicker', 'link', 'history'],
                   inline: { inDropdown: true },
                   list: { inDropdown: true },
                   textAlign: { inDropdown: true },
                   link: { inDropdown: true },
                   history: { inDropdown: true },
                   blockType: { options: ['Normal', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'Blockquote', 'Code'], },
-                  image: {
-                    uploadCallback: handleImageUpload,
-                    alt: { present: true, mandatory: false },
-                    previewImage: true,
-                    inputAccept: 'image/gif,image/jpeg,image/jpg,image/png,image/svg',
-                    urlEnabled: false,
-                  }
+                  // image: {
+                  //   uploadCallback: handleImageUpload,
+                  //   previewImage: true,
+                  // }
                 }}
                 localization={{
                   locale: "ja",

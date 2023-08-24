@@ -18,6 +18,7 @@ export const ProjectDataProvider = ({ children }) => {
   const [apiImageFiles, setApiImageFiles] = useState([]);
   const [editorState, setEditorState] = useState(() => EditorState.createEmpty());
   const [published, setPublished] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
 
   return (
     <ProjectDataContext.Provider
@@ -32,6 +33,8 @@ export const ProjectDataProvider = ({ children }) => {
         setPublished,
         editorState,
         setEditorState,
+        isEdit,
+        setIsEdit,
       }}
     >
       {children}
@@ -51,7 +54,7 @@ export const ReturnDataProvider = ({ children }) => {
     ]
   });
   const [returnImagePreviews, setReturnImagePreviews] = useState([]);
-  const [apiReturnImageFiles, setAipReturnImageFiles] = useState([]);
+  const [apiReturnImageFiles, setApiReturnImageFiles] = useState([]);
 
   return (
     <ReturnDataContext.Provider
@@ -59,7 +62,7 @@ export const ReturnDataProvider = ({ children }) => {
         returnFormData,
         setReturnFormData,
         apiReturnImageFiles,
-        setAipReturnImageFiles,
+        setApiReturnImageFiles,
         returnImagePreviews,
         setReturnImagePreviews
       }}
