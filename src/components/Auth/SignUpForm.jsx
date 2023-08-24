@@ -59,8 +59,8 @@ const SignUpForm = () => {
         Cookies.set("_access_token", response.headers["access-token"]);
         Cookies.set("_client", response.headers["client"]);
         Cookies.set("_uid", response.headers["uid"]);
-        // Cookies.set("_expiry", response.headers["expiry"]);
-        // Cookies.set("_token-type", response.headers["token-type"]);
+        Cookies.set("_expiry", response.headers["expiry"]);
+        Cookies.set("_token-type", response.headers["token-type"]);
 
         setIsSignedIn(true);
         setCurrentUser(response.data.data);

@@ -5,6 +5,7 @@ import Top from '../components/Top';
 import SignUpForm from '../components/Auth/SignUpForm';
 import SignInForm from '../components/Auth/SignInForm';
 import CreateProject from '../components/Project/CreateProject';
+import CreatedProjectList from '../components/Project/CreatedProjectList';
 
 const Content = () => {
   return (
@@ -16,6 +17,7 @@ const Content = () => {
           <Route path='/signup_form' element={<SignUpForm />} />
           <Route path='/signin_form' element={<SignInForm />} />
           <Route path='/new/project' element={<CreateProject />} />
+          <Route path='/projects' element={<CreatedProjectList />} />
         </Routes>
       </Grid>
     </Grid>
