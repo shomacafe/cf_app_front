@@ -41,7 +41,12 @@ const CreatedProjectList = () => {
         ) : (
           <p>プロジェクト画像がありません</p>
         )}
-        <Link to={`/projects/edit/${project.id}`}>編集</Link>
+        <div>
+          <Link to={`/projects/edit/${project.id}`}>編集</Link>
+        </div>
+        <div>
+          <Link to={`/projects/${project.id}`}>プロジェクトページへ</Link>
+        </div>
       </div>
     ))}
   </div>

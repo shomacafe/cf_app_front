@@ -40,7 +40,7 @@ const EditProject = () => {
           headers: headers,
         });
 
-        const projectData = response.data;
+        const projectData = response.data.project;
 
         let catchCopiesArray = [];
         catchCopiesArray = JSON.parse(projectData.catchCopies);
