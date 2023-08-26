@@ -12,7 +12,6 @@ import IndexProject from '../components/Project/IndexProject';
 import ShowProject from '../components/Project/ShowProject';
 import ReturnPurchaseConfirm from '../components/Project/ReturnPurchaseConfirm';
 import { ReturnInfoProvider } from '../components/Project/ReturnInfoContext';
-import PurchaseHistory from '../components/Project/PurchaseHistory';
 import PrivateRoute from '../lib/PrivateRoute';
 
 const CreateProjectWrapper = () => {
