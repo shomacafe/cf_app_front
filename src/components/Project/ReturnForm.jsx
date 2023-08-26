@@ -2,13 +2,14 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import { Grid, Button, TextField, Tooltip } from '@material-ui/core';
 import { ReturnDataContext } from '../../contexts/ProjectContext';
+import { resizeProjectImages } from './ResizeProjectImages';
 
 const ReturnForm = ({ handleNext, handleBack }) => {
   const {
     returnFormData,
     setReturnFormData,
     apiReturnImageFiles,
-    setAipReturnImageFiles,
+    setApiReturnImageFiles,
     returnImagePreviews,
     setReturnImagePreviews
   } = useContext(ReturnDataContext);
@@ -68,18 +69,21 @@ const ReturnForm = ({ handleNext, handleBack }) => {
     remove(index);
   }
 
-  const addReturnImage = (e, index) => {
+  const addReturnImage = async (e, index) => {
     const file = e.target.files[0];
     const imageUrl = URL.createObjectURL(file);
 
-    setAipReturnImageFiles((prevApiReturnImageFiles) => {
+    const resizedApiReturnImage = await resizeProjectImages(file, 600, 400);
+    const resizedReturnImage = await resizeProjectImages(file, 300, 200);
+
+    setApiReturnImageFiles((prevApiReturnImageFiles) => {
       const newApiReturnImageFiles = [...prevApiReturnImageFiles];
-      newApiReturnImageFiles[index] = file;
+      newApiReturnImageFiles[index] = resizedApiReturnImage;
       return newApiReturnImageFiles;
     });
     setReturnImagePreviews((prevReturnImagePreviews) => {
       const newReturnImagePreviews = [...prevReturnImagePreviews];
-      newReturnImagePreviews[index] = imageUrl;
+      newReturnImagePreviews[index] = URL.createObjectURL(resizedReturnImage);
       return newReturnImagePreviews;
     });
 
@@ -97,7 +101,7 @@ const ReturnForm = ({ handleNext, handleBack }) => {
       return newReturnImagePreviews;
     });
 
-    setAipReturnImageFiles((prevApiReturnImageFiles) => {
+    setApiReturnImageFiles((prevApiReturnImageFiles) => {
       const newApiReturnImageFiles = [...prevApiReturnImageFiles];
       newApiReturnImageFiles[index] = null;
       return newApiReturnImageFiles;
@@ -138,7 +142,7 @@ const ReturnForm = ({ handleNext, handleBack }) => {
             )}
             {returnImagePreviews[index] && (
               <div>
-                <img src={returnImagePreviews[index]} alt={`プレビュー${index + 1}`} style={{ width: '200px', height: '200px' }} />
+                <img src={returnImagePreviews[index]} alt={`プレビュー${index + 1}`} style={{ width: '300px'}} />
                 <button type='button' onClick={() => removeReturnImage(index)}>削除</button>
               </div>
             )}

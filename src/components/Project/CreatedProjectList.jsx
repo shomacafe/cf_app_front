@@ -36,9 +36,8 @@ const CreatedProjectList = () => {
       <div key={project.id}>
         <h2>{project.title}</h2>
         <h2>プロジェクトID:{project.id}</h2>
-        {console.log('Project images:', project.projectImages)}
         {project.projectImages && project.projectImages[0] ? (
-          <img src={project.projectImages[0].url} alt={project.title} />
+          <img src={project.projectImages[0].url} alt={project.title} style={{width: '300px'}} />
         ) : (
           <p>プロジェクト画像がありません</p>
         )}
@@ -46,7 +45,6 @@ const CreatedProjectList = () => {
       </div>
     ))}
   </div>
-
   )
 }
 

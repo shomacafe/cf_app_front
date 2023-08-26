@@ -5,15 +5,16 @@ import { ProjectDataContext } from '../../contexts/ProjectContext';
 import { ReturnDataContext } from '../../contexts/ProjectContext';
 import clientApi from '../../api/client';
 import Cookies from 'js-cookie';
-// import { convertFromRaw } from 'draft-js';
+import { convertToRaw } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import Modal from '@mui/material/Modal';
+import { useParams } from 'react-router-dom'
 
 const ProjectConfirm = ({ handleBack }) => {
+  const { project_id } = useParams();
   const navigate = useNavigate();
-  const { projectFormData, imagePreviews, published, setPublished } = useContext(ProjectDataContext);
+  const { projectFormData, apiImageFiles, imagePreviews, published, setPublished, editorState, isEdit } = useContext(ProjectDataContext);
   const { returnFormData, apiReturnImageFiles, returnImagePreviews } = useContext(ReturnDataContext);
-  // const contentState = convertFromRaw(projectFormData.description);
   const projectDescriptionHtml = draftToHtml(projectFormData.description);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
@@ -22,7 +23,7 @@ const ProjectConfirm = ({ handleBack }) => {
   }
 
   const handleConfirm = async () => {
-    const confirmResult = window.confirm('プロジェクトを登録してよろしいですか？');
+    const confirmResult = window.confirm(isEdit ? 'プロジェクトを更新してもよろしいですか？' : 'プロジェクトを登録してよろしいですか？');
 
     if (confirmResult) {
       try {
@@ -32,7 +33,8 @@ const ProjectConfirm = ({ handleBack }) => {
         combinedData.append('start_date', projectFormData.start_date.toISOString());
         combinedData.append('end_date', projectFormData.end_date.toISOString());
 
-        combinedData.append('description', JSON.stringify(projectFormData.description));
+        const editorStateContent = convertToRaw(editorState.getCurrentContent());
+        combinedData.append('description', JSON.stringify(editorStateContent));
 
         combinedData.append('is_published', published);
 
@@ -53,6 +55,10 @@ const ProjectConfirm = ({ handleBack }) => {
           if (apiReturnImageFiles[index]) {
             combinedData.append(`returns_attributes[${index}][return_image]`, apiReturnImageFiles[index]);
           }
+
+          if (isEdit && returnData.id) {
+            combinedData.append(`returns_attributes[${index}][id]`, returnData.id);
+          }
         });
 
         const headers = {
@@ -63,7 +69,13 @@ const ProjectConfirm = ({ handleBack }) => {
           'token-type': Cookies.get('_token-type'),
         };
 
-        const response = await clientApi.post('/projects', combinedData, {
+        const url = isEdit ? `/projects/${project_id}` : '/projects'
+        const method = isEdit ? 'put' : 'post';
+
+        const response = await clientApi.request({
+          url,
+          method,
+          data: combinedData,
           headers: {
             ...headers,
             'Content-Type': 'multipart/form-data'
@@ -71,10 +83,7 @@ const ProjectConfirm = ({ handleBack }) => {
         });
 
         console.log('API レスポンス', response.data);
-
-        if (setShowSuccessModal(true)) {
-          navigate('/');
-        }
+        setShowSuccessModal(true)
       } catch (error) {
         console.error('データの送信に失敗しました', error);
       }
@@ -154,14 +163,16 @@ const ProjectConfirm = ({ handleBack }) => {
             戻る
           </Button>
           <Button variant="contained" color="primary" onClick={handleConfirm}>
-            プロジェクトを登録する
+            {isEdit ? 'プロジェクトを更新する' : 'プロジェクトを登録する'}
           </Button>
         </Grid>
       </Grid>
       <Modal open={showSuccessModal} onClose={() => navigate('/')}>
         <div className='modal-overlay'>
           <div className='modal-content'>
-            <h2 className='modal-title'>プロジェクトを作成しました</h2>
+            <h2 className='modal-title'>
+              {isEdit ? 'プロジェクトを更新しました' : 'プロジェクトを作成しました'}
+            </h2>
           </div>
         </div>
       </Modal>

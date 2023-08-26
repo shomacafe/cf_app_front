@@ -1,9 +1,8 @@
-import React, { createContext, useState } from 'react'
+import React, { useState } from 'react'
 import { Stepper, Step, StepLabel } from '@material-ui/core'
 import ProjectForm from './ProjectForm'
 import ReturnForm from './ReturnForm'
 import ProjectConfirm from './ProjectConfirm'
-import { ProjectDataProvider, ReturnDataProvider } from '../../contexts/ProjectContext';
 
 const CreateProject = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -44,11 +43,7 @@ const CreateProject = () => {
           </Step>
         ))}
       </Stepper>
-      <ProjectDataProvider>
-        <ReturnDataProvider>
-          {renderStepContent(activeStep)}
-        </ReturnDataProvider>
-      </ProjectDataProvider>
+      {renderStepContent(activeStep)}
     </>
   )
 }
