@@ -23,7 +23,10 @@ const Top = () => {
         <Link to={`/new/project`}>プロジェクトをはじめる</Link>
       </div>
       <div>
-        <Link to={`/projects`}>作成したプロジェクト一覧</Link>
+        <Link to={`/my_projects`}>作成したプロジェクト一覧</Link>
+      </div>
+      <div>
+        <Link to={`/projects`}>全てのプロジェクト一覧</Link>
       </div>
     </>
   )
