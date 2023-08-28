@@ -28,6 +28,9 @@ const Top = () => {
       <div>
         <Link to={`/projects`}>全てのプロジェクト一覧</Link>
       </div>
+      <div>
+        <Link to={'/purchases'}>購入履歴</Link>
+      </div>
     </>
   )
 }

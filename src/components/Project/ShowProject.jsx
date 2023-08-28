@@ -7,6 +7,57 @@ import { Editor, convertFromRaw, EditorState } from 'draft-js';
 import ReturnInfo from './ReturnInfo'
 import { ReturnInfoContext } from './ReturnInfoContext'
 import { AuthContext } from '../../lib/AuthContext'
+import { Grid, Paper, Typography, makeStyles } from '@material-ui/core'
+import ProjectImageSlideshow from './ProjectImageSlideshow'
+import { Splide, SplideSlide } from '@splidejs/react-splide'
+import '@splidejs/splide/css'
+import '@splidejs/splide/dist/css/themes/splide-default.min.css'
+
+const useStyles = makeStyles((theme) => ({
+  heroContainer: {
+    width: '100%',
+    maxWidth: '1200px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: theme.spacing(3),
+  },
+  heroImage: {
+    width: '100%',
+    maxWidth: '650px',
+    marginRight: theme.spacing(3),
+  },
+  mainContainer: {
+    display: 'flex',
+    marginBottom: theme.spacing(3),
+  },
+  mainContent: {
+    flexGrow: 1,
+    marginRight: theme.spacing(3),
+  },
+  sideBar: {
+    flexShrink: 0,
+    width: '300px',
+  },
+  projectTitle: {
+    textAlign: 'center',
+    marginBottom: theme.spacing(3),
+  },
+  projectInfo: {
+    marginLeft: '50px',
+    marginBottom: theme.spacing(2),
+  },
+  descriptionEditor: {
+    marginBottom: theme.spacing(3),
+  },
+  splideContainer: {
+    width: '100%',
+    maxWidth: '650px',
+  },
+  slideImage: {
+    width: '100%',
+  },
+}));
 
 const ShowProject = () => {
   const { project_id } = useParams();
@@ -22,6 +73,7 @@ const ShowProject = () => {
   });
   const [descriptionEditorState, setDescriptionEditorState] = useState(EditorState.createEmpty());
   const [isPurchaseDisabled, setIsPurchaseDisabled] =useState(false);
+  const classes = useStyles();
 
   useEffect(() => {
     const fetchProjectData = async () => {
@@ -107,11 +159,11 @@ const ShowProject = () => {
   if (projectData && projectData.start_date > new Date()) {
     remainingText = `${formattedStartDate}に開始予定です。`;
   } else if (remainingDays > 0) {
-    remainingText = `あと${remainingDays}日`;
+    remainingText = `${remainingDays}日`;
   } else if (remainingHours > 0) {
-    remainingText = `あと${remainingHours}時間`;
+    remainingText = `${remainingHours}時間`;
   } else if (remainingMinutes > 0) {
-    remainingText = `あと${remainingMinutes}分`;
+    remainingText = `${remainingMinutes}分`;
   } else {
     remainingText = '終了しました'
   }
@@ -123,49 +175,97 @@ const ShowProject = () => {
   console.log('購入できません', isPurchaseDisabled)
   // console.log('公開状態', projectData.is_published)
 
+  const dotImages = projectData && projectData.project_images.map((projectImage, index) => ({
+    src: projectImage.url,
+    alt: `${projectImage.title} - 画像${index + 1}`,
+  }))
+
   return (
     <>
-      <h2>プロジェクトページ</h2>
-      {console.log(projectData)}
       {projectData !== null ? (
         <>
-          <h2>{projectData.title}</h2>
-          {projectData.project_images ? (
-            projectData.project_images.map((projectImage, index) => {
-              return (
-                <img
-                  key={index}
-                  src={projectImage.url}
-                  alt={`${projectData.title} - 画像${index + 1}`}
-                  style={{width: '300px'}}
-                />
-              );
-            })
-          ) : (
-            <p>プロジェクト画像がありません</p>
-          )}
-          <p>応援購入総額{projectData.total_amount}円</p>
-          <p>目標金額{projectData.goal_amount}円</p>
-          <p>達成率{projectData.success_rate}%</p>
-          <progress value={progress} max='100'></progress>
-          {isAchived ? <p>Success!</p> : <p>未達成</p>}
-          <p>サポーター{projectData.support_count}人</p>
-          {projectData.catch_copies.map((catchCopy, index) => (
-            <p key={index}>{catchCopy}</p>
-          ))}
-          <p>{remainingText}</p>
-          <p>
-            このプロジェクトの実施期間は
-            {formattedStartDate}〜
-            {formattedEndDate}
-            です
-          </p>
-          <div>
-            <p>プロジェクト作成者：{projectData.user && projectData.user.name ? projectData.user.name : ''}</p>
+          <Typography className={classes.projectTitle} style={{ fontWeight: 'bold', margin: '40px 0' }} variant='h4'>{projectData.title}</Typography>
+          <div className={classes.heroContainer}>
+            <div className={classes.splideContainer}>
+              <Splide
+                options={{
+                  type: 'slide',
+                  perPage: 1,
+                  pagination: true,
+                  arrows: true,
+                }}
+              >
+                {projectData.project_images.map((projectImage, index) => (
+                  <SplideSlide key={index}>
+                    <img
+                      src={projectImage.url}
+                      alt={`${projectImage.title} - 画像${index + 1}`}
+                      className={classes.slideImage}
+                    />
+                  </SplideSlide>
+                ))}
+              </Splide>
+            </div>
+            {/* <ProjectImageSlideshow projectData={projectData}/> */}
+            {/* <img
+              src={projectData.project_images[0].url} // 最初の画像を表示
+              alt={`${projectData.title} - 画像1`}
+              className={classes.heroImage}
+            /> */}
+            {/* {projectData.project_images ? (
+              projectData.project_images.map((projectImage, index) => {
+                return (
+                  <img
+                    key={index}
+                    src={projectImage.url}
+                    alt={`${projectData.title} - 画像${index + 1}`}
+                    style={{width: '300px'}}
+                  />
+                );
+              })
+            ) : (
+              <p>プロジェクト画像がありません</p>
+            )} */}
+            <div className={classes.projectInfo}>
+              <Typography variant='h6'>応援購入総額</Typography>
+              <Typography variant='h3' style={{ fontWeight: 'bold' }}>{projectData.total_amount}円</Typography>
+              <progress value={progress} max='100'></progress>
+              <Typography>達成率{projectData.success_rate}%</Typography>
+              <Typography>目標金額は{projectData.goal_amount}円</Typography>
+              <Typography>{isAchived ? <p>Success!</p> : ''}</Typography>
+              <Typography variant='h6' style={{ marginTop: '20px' }}>支援者数</Typography>
+              <Typography variant='h3' style={{ fontWeight: 'bold' }}>{projectData.support_count}人</Typography>
+              {projectData.start_date > new Date() || projectData.end_date < new Date() ? (
+                <p></p>
+               ) : (
+                <Typography variant='h6' style={{ marginTop: '20px' }}>終了まで残り</Typography>
+               )
+              }
+              <Typography variant='h3' style={{ fontWeight: 'bold' }}>{remainingText}</Typography>
+            </div>
           </div>
-          <Editor editorState={descriptionEditorState} readOnly />
-          <div>
-            <ReturnInfo project_id={project_id} isPurchaseDisabled={isPurchaseDisabled} />
+          <div className={classes.mainContainer}>
+            <div className={classes.mainContent}>
+            <Typography variant='h5' style={{ fontWeight: 'bold' }}>ピックアップ</Typography>
+              {projectData.catch_copies.map((catchCopy, index) => (
+                <p key={index}>{catchCopy}</p>
+              ))}
+              <Typography variant='h5' style={{ fontWeight: 'bold', marginTop: '40px' }}>プレゼンター</Typography>
+              <div>
+                <p>プロジェクト作成者：{projectData.user && projectData.user.name ? projectData.user.name : ''}</p>
+              </div>
+              <Typography variant='h5' style={{ fontWeight: 'bold', marginTop: '30px' }}>プロジェクト概要</Typography>
+              <Editor editorState={descriptionEditorState} readOnly />
+              <p>
+                このプロジェクトの実施期間は
+                {formattedStartDate}〜
+                {formattedEndDate}
+                です
+              </p>
+            </div>
+            <div className={classes.sideBar}>
+              <ReturnInfo project_id={project_id} isPurchaseDisabled={isPurchaseDisabled} />
+            </div>
           </div>
         </>
       ) : (

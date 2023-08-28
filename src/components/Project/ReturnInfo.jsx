@@ -8,10 +8,10 @@ const ReturnInfo = ({ project_id, isPurchaseDisabled }) => {
 
   return (
     <>
-      <h2>リターン情報</h2>
+      <h2>リターン</h2>
       {returnData.map((returnItem, index) => {
         return(
-          <div key={index}>
+          <div key={index} style={{backgroundColor: '#f7f7f7'}}>
             {console.log(returnItem)}
             <p>リターン名:{returnItem.name}</p>
             <p>説明: {returnItem.description}</p>

@@ -47,11 +47,6 @@ const Header = () => {
         Cookies.remove('_uid')
         Cookies.remove('_expiry');
         Cookies.remove('_token-type');
-        Cookies.remove('access_token')
-        Cookies.remove('client')
-        Cookies.remove('uid')
-        Cookies.remove('expiry');
-        Cookies.remove('token-type');
 
         setIsSignedIn(false);
         navigate('/');
