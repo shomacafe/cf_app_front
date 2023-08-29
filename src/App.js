@@ -9,9 +9,15 @@ const useStyles = makeStyles((theme) => ({
     // minHeight: '300vh',
     backgroundColor: '#f7f7f7',
     padding: theme.spacing(2),
+    // [theme.breakpoints.down('sm')]: {
+    //   padding: '0',
+    // },
   },
   mainContainer: {
     padding: theme.spacing(3),
+    // [theme.breakpoints.down('sm')]: {
+    //   padding: '0',
+    // },
   },
   paper: {
     backgroundColor: 'white',
@@ -19,9 +25,14 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: theme.spacing(1),
     padding: theme.spacing(3),
     width: '100%',
-    maxWidth: '1200px',
+    maxWidth: '1300px',
     // minHeight: '500px',
     margin: '0 auto',
+    [theme.breakpoints.down('sm')]: {
+      backgroundColor: 'white',
+      boxShadow: 'none',
+      padding: '',
+    },
   }
 }));
 
