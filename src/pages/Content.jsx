@@ -36,22 +36,18 @@ const EditProjectWrapper = () => {
 
 const Content = () => {
   return (
-    <Grid container spacing={10}>
-      <Grid item sm={2} />
-      <Grid item lg={8} sm={8}>
-        <Routes>
-          <Route index element={<Top />} />
-          <Route path='/signup_form' element={<SignUpForm />} />
-          <Route path='/signin_form' element={<SignInForm />} />
-          <Route path='/new/project' element={<PrivateRoute element={<CreateProjectWrapper />} />} />
-          <Route path='/projects/edit/:project_id' element={<EditProjectWrapper />} />
-          <Route path='/my_projects' element={<PrivateRoute element={<CreatedProjectList />} />} />
-          <Route path='/projects' element={<IndexProject />} />
-          <Route path='/projects/:project_id' element={<ReturnInfoProvider><ShowProject /></ReturnInfoProvider>} />
-          <Route path='/purchase/confirm' element={<ReturnInfoProvider><ReturnPurchaseConfirm /></ReturnInfoProvider>} />
-        </Routes>
-      </Grid>
-    </Grid>
+    <Routes>
+      <Route index element={<Top />} />
+      <Route path='/signup_form' element={<SignUpForm />} />
+      <Route path='/signin_form' element={<SignInForm />} />
+      <Route path='/new/project' element={<PrivateRoute element={<CreateProjectWrapper />} />} />
+      <Route path='/projects/edit/:project_id' element={<EditProjectWrapper />} />
+      <Route path='/my_projects' element={<PrivateRoute element={<CreatedProjectList />} />} />
+      <Route path='/projects' element={<IndexProject />} />
+      <Route path='/projects/:project_id' element={<ReturnInfoProvider><ShowProject /></ReturnInfoProvider>} />
+      <Route path='/purchase/confirm' element={<ReturnInfoProvider><ReturnPurchaseConfirm /></ReturnInfoProvider>} />
+      <Route path='/purchases' element={<PrivateRoute element={<PurchaseHistory />} />} />
+    </Routes>
   )
 }
 
