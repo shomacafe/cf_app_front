@@ -8,7 +8,6 @@ const useStyles = makeStyles((theme) => ({
   projectCard: {
     textDecoration: 'none',
     backgroundColor: 'white',
-    // flex: '0 1 calc(25% - 20px)',
     margin: '10px',
     borderRadius: '10px',
     boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
@@ -16,9 +15,9 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)',
     },
-    height: '100%', // 高さを100%に設定
-    display: 'flex', // コンテンツを縦に並べるために flex を使用
-    flexDirection: 'column', // コンテンツを縦に並べる
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
   },
   projectLink: {
     textDecoration: 'none',
