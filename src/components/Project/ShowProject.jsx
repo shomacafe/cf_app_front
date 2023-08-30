@@ -1,15 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import Cookies from 'js-cookie'
 import clientApi from '../../api/client'
 import { parseISO, format } from 'date-fns'
 import { Editor, convertFromRaw, EditorState } from 'draft-js';
 import ReturnInfo from './ReturnInfo'
 import { ReturnInfoContext } from './ReturnInfoContext'
 import { AuthContext } from '../../lib/AuthContext'
-import { Grid, Paper, Typography, makeStyles } from '@material-ui/core'
+import {Typography, makeStyles } from '@material-ui/core'
 import ProjectImageSlideshow from './ProjectImageSlideshow'
-import { Splide, SplideSlide } from '@splidejs/react-splide'
 import '@splidejs/splide/css'
 import '@splidejs/splide/dist/css/themes/splide-default.min.css'
 
@@ -44,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(3),
   },
   projectInfo: {
-    marginLeft: '50px',
+    marginLeft: '80px',
     marginBottom: theme.spacing(2),
   },
   descriptionEditor: {
@@ -53,9 +51,6 @@ const useStyles = makeStyles((theme) => ({
   splideContainer: {
     width: '100%',
     maxWidth: '650px',
-  },
-  slideImage: {
-    width: '100%',
   },
 }));
 
@@ -172,14 +167,6 @@ const ShowProject = () => {
   const progress = projectData ? Math.min((projectData.total_amount / projectData.goal_amount) * 100, 100) : 0;
   const isAchived = projectData ? (progress === 100) : false;
 
-  console.log('購入できません', isPurchaseDisabled)
-  // console.log('公開状態', projectData.is_published)
-
-  const dotImages = projectData && projectData.project_images.map((projectImage, index) => ({
-    src: projectImage.url,
-    alt: `${projectImage.title} - 画像${index + 1}`,
-  }))
-
   return (
     <>
       {projectData !== null ? (
@@ -187,45 +174,9 @@ const ShowProject = () => {
           <Typography className={classes.projectTitle} style={{ fontWeight: 'bold', margin: '40px 0' }} variant='h4'>{projectData.title}</Typography>
           <div className={classes.heroContainer}>
             <div className={classes.splideContainer}>
-              <Splide
-                options={{
-                  type: 'slide',
-                  perPage: 1,
-                  pagination: true,
-                  arrows: true,
-                }}
-              >
-                {projectData.project_images.map((projectImage, index) => (
-                  <SplideSlide key={index}>
-                    <img
-                      src={projectImage.url}
-                      alt={`${projectImage.title} - 画像${index + 1}`}
-                      className={classes.slideImage}
-                    />
-                  </SplideSlide>
-                ))}
-              </Splide>
+              <ProjectImageSlideshow projectData={projectData} />
             </div>
-            {/* <ProjectImageSlideshow projectData={projectData}/> */}
-            {/* <img
-              src={projectData.project_images[0].url} // 最初の画像を表示
-              alt={`${projectData.title} - 画像1`}
-              className={classes.heroImage}
-            /> */}
-            {/* {projectData.project_images ? (
-              projectData.project_images.map((projectImage, index) => {
-                return (
-                  <img
-                    key={index}
-                    src={projectImage.url}
-                    alt={`${projectData.title} - 画像${index + 1}`}
-                    style={{width: '300px'}}
-                  />
-                );
-              })
-            ) : (
-              <p>プロジェクト画像がありません</p>
-            )} */}
+
             <div className={classes.projectInfo}>
               <Typography variant='h6'>応援購入総額</Typography>
               <Typography variant='h3' style={{ fontWeight: 'bold' }}>{projectData.total_amount}円</Typography>

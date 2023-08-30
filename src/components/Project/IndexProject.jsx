@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import clientApi from '../../api/client';
 import Cookies from 'js-cookie';
-import { Link } from 'react-router-dom';
+import { Grid } from '@material-ui/core';
+import { parseISO } from 'date-fns'
+import ProjectCard from './ProjectCard';
+
 
 const IndexProject = () => {
-  const [projects, setProjects] = useState([]);
+  const [projectData, setProjectData] = useState([]);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -20,7 +23,15 @@ const IndexProject = () => {
         });
 
         console.log('API レスポンス', response.data)
-        setProjects(response.data)
+        setProjectData(response.data.map((projectItem) =>({
+          id: projectItem.project.id,
+          title: projectItem.project.title,
+          start_date: parseISO(projectItem.project.startDate),
+          end_date: parseISO(projectItem.project.endDate),
+          project_images: projectItem.project.projectImages,
+          total_amount: projectItem.totalAmount,
+          support_count: projectItem.supportCount,
+        })))
       } catch (error) {
         console.error('API レスポンスの取得に失敗しました', error);
       }
@@ -29,22 +40,17 @@ const IndexProject = () => {
     fetchProjects();
   }, []);
 
-
   return (
-    <div>
-    {projects.map((project) => (
-      <div key={project.id}>
-        <h2>{project.title}</h2>
-        <h2>プロジェクトID:{project.id}</h2>
-        {project.projectImages && project.projectImages[0] ? (
-          <img src={project.projectImages[0].url} alt={project.title} style={{width: '300px'}} />
-        ) : (
-          <p>プロジェクト画像がありません</p>
-        )}
-        <Link to={`/projects/${project.id}`}>プロジェクトページへ</Link>
-      </div>
-    ))}
-  </div>
+    <div className={classes.projectList}>
+      <h2>プロジェクト</h2>
+      <Grid container spacing={2}>
+        {projectData.map((projectData, index) => (
+          <Grid item key={index} xs={6} sm={4} md={3} lg={3}>
+            <ProjectCard projectData={projectData} />
+          </Grid>
+        ))}
+      </Grid>
+    </div>
   )
 }
 
