@@ -2,9 +2,22 @@ import React, { useEffect, useState } from 'react'
 import clientApi from '../../api/client';
 import Cookies from 'js-cookie';
 import { Link } from 'react-router-dom';
+import { Grid, CircularProgress } from '@material-ui/core';
+import { parseISO } from 'date-fns'
+import ProjectCard from './ProjectCard';
+
+const styles = {
+  spinnerContainer: {
+    display: 'grid',
+    placeItems: 'center',
+    minHeight: '100vh',
+  },
+};
+
 
 const CreatedProjectList = () => {
-  const [projects, setProjects] = useState([]);
+  const [projectData, setProjectData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -20,9 +33,22 @@ const CreatedProjectList = () => {
         });
 
         console.log('API レスポンス', response.data)
-        setProjects(response.data)
+
+        setProjectData(response.data.map((projectItem) =>({
+          id: projectItem.project.id,
+          title: projectItem.project.title,
+          start_date: parseISO(projectItem.project.startDate),
+          end_date: parseISO(projectItem.project.endDate),
+          project_images: projectItem.project.projectImages,
+          total_amount: projectItem.totalAmount,
+          support_count: projectItem.supportCount,
+          is_published: projectItem.project.isPublished
+        })))
+
       } catch (error) {
         console.error('API レスポンスの取得に失敗しました', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -31,25 +57,22 @@ const CreatedProjectList = () => {
 
 
   return (
-    <div>
-    {projects.map((project) => (
-      <div key={project.id}>
-        <h2>{project.title}</h2>
-        <h2>プロジェクトID:{project.id}</h2>
-        {project.projectImages && project.projectImages[0] ? (
-          <img src={project.projectImages[0].url} alt={project.title} style={{width: '300px'}} />
-        ) : (
-          <p>プロジェクト画像がありません</p>
-        )}
-        <div>
-          <Link to={`/projects/edit/${project.id}`}>編集</Link>
+    <>
+      <h2>作成したプロジェクト</h2>
+      {loading ? (
+        <div style={styles.spinnerContainer}>
+          <CircularProgress />
         </div>
-        <div>
-          <Link to={`/projects/${project.id}`}>プロジェクトページへ</Link>
-        </div>
-      </div>
-    ))}
-  </div>
+      ) : (
+        <Grid container spacing={2}>
+          {projectData.map((projectData, index) => (
+            <Grid item key={index} xs={6} sm={4} md={3} lg={3}>
+              <ProjectCard projectData={projectData} useEdit={'useEdit'} />
+            </Grid>
+          ))}
+        </Grid>
+      )}
+    </>
   )
 }
 

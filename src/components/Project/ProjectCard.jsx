@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { format } from 'date-fns'
 
@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme) => ({
   projectCard: {
     textDecoration: 'none',
     backgroundColor: 'white',
-    margin: '10px',
+    margin: '0 10px',
     borderRadius: '10px',
     boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
     transition: 'box-shadow 0.3s ease',
@@ -77,7 +77,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const ProjectCard = ({ projectData }) => {
+const ProjectCard = ({ projectData, useEdit }) => {
   const classes = useStyles();
 
   const formatRemainingTime = (endDate) => {
@@ -87,7 +87,7 @@ const ProjectCard = ({ projectData }) => {
     const remainingHours = Math.floor((remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const remainingMinutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
 
-    if (endDate > now) {
+    if (endDate > now && remainingDays > 0) {
       return `残り ${remainingDays}日`;
     } else if (remainingHours > 0) {
       return `残り ${remainingHours}時間`;
@@ -115,14 +115,28 @@ const ProjectCard = ({ projectData }) => {
               <Typography>{`${format(projectData.start_date, 'yyyy年MM月dd日 HH:mm')}開始予定`}</Typography>
             ): (
               <>
-                <Typography className={classes.totalAmount}>現在 {projectData.total_amount}円</Typography>
+                <Typography className={classes.totalAmount}>現在 {projectData.total_amount.toLocaleString()}円</Typography>
                 <Typography className={classes.supportCount}>支援者 {projectData.support_count}人</Typography>
                 <Typography className={classes.remainingTime}>{formatRemainingTime(projectData.end_date)}</Typography>
+                {useEdit && <Typography className={classes.totalAmount}>{projectData.is_published ? '公開中' : '非公開'}</Typography>}
               </>
             )}
           </div>
         </div>
       </Link>
+      {useEdit &&
+        <>
+          <Button
+            variant='contained'
+            size='large'
+            color='primary'
+            component={Link}
+            to={`/projects/edit/${projectData.id}`}
+          >
+            編集する
+          </Button>
+        </>
+      }
     </div>
   )
 }

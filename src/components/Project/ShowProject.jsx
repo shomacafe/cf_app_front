@@ -2,14 +2,13 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import clientApi from '../../api/client'
 import { parseISO, format } from 'date-fns'
-import { Editor, convertFromRaw, EditorState } from 'draft-js';
+import { Editor, convertFromRaw, EditorState } from 'draft-js'
 import ReturnInfo from './ReturnInfo'
 import { ReturnInfoContext } from './ReturnInfoContext'
 import { AuthContext } from '../../lib/AuthContext'
-import {Typography, makeStyles } from '@material-ui/core'
+import {Typography, makeStyles, CircularProgress } from '@material-ui/core'
 import ProjectImageSlideshow from './ProjectImageSlideshow'
-import '@splidejs/splide/css'
-import '@splidejs/splide/dist/css/themes/splide-default.min.css'
+import RecommendedProject from './RecommendedProject'
 
 const useStyles = makeStyles((theme) => ({
   heroContainer: {
@@ -35,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
   },
   sideBar: {
     flexShrink: 0,
-    width: '300px',
+    width: '350px',
   },
   projectTitle: {
     textAlign: 'center',
@@ -52,12 +51,19 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     maxWidth: '650px',
   },
+  spinnerContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: '100vh',
+  },
 }));
 
 const ShowProject = () => {
   const { project_id } = useParams();
   const { setReturnData } = useContext(ReturnInfoContext)
   const {isSignedIn, currentUser, loading} = useContext(AuthContext);
+  const [projectLoading, setProjectLoading] = useState(true);
   const [projectData, setProjectData] = useState({
     title: '',
     catch_copies: [''],
@@ -128,14 +134,16 @@ const ShowProject = () => {
         console.log('API レスポンス', response.data)
       } catch (error) {
         console.error('API レスポンスの取得に失敗しました', error);
+      } finally {
+        setProjectLoading(false);
       }
     }
 
     fetchProjectData();
-  }, [loading])
+  }, [loading, project_id])
 
   if (loading) {
-    return <p>ロード中...</p>
+    return <CircularProgress />
   }
 
   // 開始日と終了日を適切に表示
@@ -169,7 +177,11 @@ const ShowProject = () => {
 
   return (
     <>
-      {projectData !== null ? (
+      {projectLoading ? (
+        <div className={classes.spinnerContainer}>
+          <CircularProgress />
+        </div>
+      ) : projectData !== null ? (
         <>
           <Typography className={classes.projectTitle} style={{ fontWeight: 'bold', margin: '40px 0' }} variant='h4'>{projectData.title}</Typography>
           <div className={classes.heroContainer}>
@@ -179,10 +191,10 @@ const ShowProject = () => {
 
             <div className={classes.projectInfo}>
               <Typography variant='h6'>応援購入総額</Typography>
-              <Typography variant='h3' style={{ fontWeight: 'bold' }}>{projectData.total_amount}円</Typography>
+              <Typography variant='h3' style={{ fontWeight: 'bold' }}>{projectData.total_amount && projectData.total_amount.toLocaleString()}円</Typography>
               <progress value={progress} max='100'></progress>
               <Typography>達成率{projectData.success_rate}%</Typography>
-              <Typography>目標金額は{projectData.goal_amount}円</Typography>
+              <Typography>目標金額は{projectData.goal_amount && projectData.goal_amount.toLocaleString()}円</Typography>
               <Typography>{isAchived ? <p>Success!</p> : ''}</Typography>
               <Typography variant='h6' style={{ marginTop: '20px' }}>支援者数</Typography>
               <Typography variant='h3' style={{ fontWeight: 'bold' }}>{projectData.support_count}人</Typography>
@@ -218,10 +230,15 @@ const ShowProject = () => {
               <ReturnInfo project_id={project_id} isPurchaseDisabled={isPurchaseDisabled} />
             </div>
           </div>
+          <div>
+            <h2>おすすめのプロジェクト</h2>
+            <RecommendedProject criteria={'newest'} currentProjectId={project_id}/>
+          </div>
         </>
       ) : (
         <p>このプロジェクトは非公開です。</p>
-      )}
+      )
+    }
     </>
   )
 }

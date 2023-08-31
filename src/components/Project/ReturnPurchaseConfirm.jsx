@@ -13,10 +13,10 @@ const ReturnPurchaseConfirm = () => {
   const queryParams = new URLSearchParams(window.location.search);
   const selectedReturnId = queryParams.get('return_id');
   const selectedProjectId = queryParams.get('project_id');
+  const selectedQuantity = queryParams.get('quantity');
   const selectedReturn = returnData.find(item => item.id === parseInt(selectedReturnId));
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  console.log('project_id', selectedProjectId)
   const handleConfirm = async () => {
     const confirmResult = window.confirm('リターンを購入してもよろしいですか？');
 
@@ -25,7 +25,7 @@ const ReturnPurchaseConfirm = () => {
         const combinedData = {
           project_id: selectedProjectId,
           return_id: selectedReturn.id,
-          quantity: 1,
+          quantity: parseInt(selectedQuantity),
           amount: selectedReturn.price
         }
 
@@ -55,7 +55,8 @@ const ReturnPurchaseConfirm = () => {
         <h2>応援購入するリターン</h2>
         <p>リターン名：{selectedReturn.name}</p>
         <p>説明: {selectedReturn.description}</p>
-        <p>価格: {selectedReturn.price}</p>
+        <p>{selectedReturn.price.toLocaleString()}円　×　 {selectedQuantity}個　= {(selectedReturn.price * selectedQuantity).toLocaleString()}円</p>
+        <p>数量: {selectedQuantity}</p>
         <img src={selectedReturn.return_image.url} alt={'selectedReturn.name'} style={{width: '300px'}} />
       </div>
       <Button variant="contained" color="primary" onClick={handleConfirm}>
