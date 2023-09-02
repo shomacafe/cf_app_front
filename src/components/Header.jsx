@@ -14,6 +14,7 @@ import MenuIcon from "@material-ui/icons/Menu"
 import { AuthContext } from '../lib/AuthContext';
 
 import { signOut } from '../api/auth';
+import GuestLoginButton from './Auth/GuestLoginButton';
 
 const useStyles = makeStyles((theme) => ({
   iconButton: {
@@ -45,8 +46,9 @@ const Header = () => {
         Cookies.remove('_access_token')
         Cookies.remove('_client')
         Cookies.remove('_uid')
-        Cookies.remove('_expiry');
-        Cookies.remove('_token-type');
+        Cookies.remove('_expiry')
+        Cookies.remove('_token-type')
+        Cookies.remove('isGuest')
 
         setIsSignedIn(false);
         navigate('/');
@@ -91,6 +93,7 @@ const Header = () => {
             >
               新規登録
             </Button>
+            <GuestLoginButton />
           </>
         );
       }

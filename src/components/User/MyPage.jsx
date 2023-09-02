@@ -65,7 +65,10 @@ const useStyles = makeStyles((theme) => ({
 
 const MyPage = () => {
   const { userData, setUserData, loading } = useContext(UserDataContext);
+  const { isGuest } = useContext(AuthContext);
   const classes = useStyles();
+
+  console.log('isGuest', isGuest)
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -109,6 +112,7 @@ const MyPage = () => {
                 color='primary'
                 component={Link}
                 to={'/profile/edit'}
+                disabled={isGuest}
               >
                 変更
               </Button>
@@ -139,6 +143,7 @@ const MyPage = () => {
                 color='primary'
                 component={Link}
                 to={`/account/edit`}
+                disabled={isGuest}
               >
                 変更
               </Button>

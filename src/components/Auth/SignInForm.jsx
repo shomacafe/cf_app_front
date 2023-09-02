@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'
 import Cookies from "js-cookie"
 
 import { makeStyles } from "@material-ui/core/styles"
@@ -12,7 +12,8 @@ import Button from "@material-ui/core/Button"
 import Box from "@material-ui/core/Box"
 
 import { signIn } from '../../api/auth';
-import { AuthContext } from '../../lib/AuthContext';
+import { AuthContext } from '../../lib/AuthContext'
+import GuestLoginButton from './GuestLoginButton'
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -121,6 +122,8 @@ const SignInForm = () => {
               <Typography valiant='body2'>
                 新規登録ページは<Link to='/signup_form' className={classes.link}>こちら</Link>
               </Typography>
+              <Typography style={{ marginTop: '15px' }}>ゲストログインはこちら</Typography>
+              <GuestLoginButton />
             </Box>
           </CardContent>
         </Card>

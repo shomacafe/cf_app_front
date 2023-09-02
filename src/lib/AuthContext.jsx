@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react'
-import { getCurrentUser } from '../api/auth';
+import { getCurrentUser, getGuestUser } from '../api/auth';
+import Cookies from 'js-cookie';
 
 export const AuthContext = createContext();
 
@@ -8,24 +9,59 @@ export const AuthProvider = ({ children }) => {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(undefined);
 
+  const initialIsGuest = Cookies.get('isGuest') === 'true';
+  const [isGuest, setIsGuest] = useState(initialIsGuest);
+
   const handleGetCurrentUser = async () => {
     try {
       const response = await getCurrentUser();
 
       if (response?.data.isLogin === true) {
         setIsSignedIn(true);
-        setCurrentUser(response?.data.data)
+        setCurrentUser(response?.data.data);
       }
+
+      console.log('普通のユーザーだよ')
+
+      Cookies.set("isGuest", "false");
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
 
     setLoading(false);
   };
 
+  const handleGetGuestUser = async () => {
+    try {
+      const response = await getGuestUser();
+
+      if (response?.data) {
+        setIsSignedIn(true);
+        setCurrentUser(response?.data.data);
+      }
+
+      setIsGuest(true);
+      console.log('currentUser', currentUser)
+
+      Cookies.set("isGuest", "true");
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    handleGetCurrentUser();
-  }, [setCurrentUser]);
+    if(isGuest) {
+      handleGetGuestUser();
+    } else {
+      handleGetCurrentUser();
+    }
+  }, [isGuest, setCurrentUser])
+
+  console.log('isGuest', isGuest)
 
   return (
     <AuthContext.Provider
@@ -36,6 +72,8 @@ export const AuthProvider = ({ children }) => {
         setIsSignedIn,
         currentUser,
         setCurrentUser,
+        isGuest,
+        setIsGuest,
       }}
     >
       {children}
