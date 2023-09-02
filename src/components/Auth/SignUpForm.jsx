@@ -53,7 +53,6 @@ const SignUpForm = () => {
 
     try {
       const response = await signUp(params);
-      console.log(response);
 
       if (response.status === 200) {
         Cookies.set("_access_token", response.headers["access-token"]);

@@ -39,6 +39,8 @@ const useStyles = makeStyles((theme) => ({
   projectTitle: {
     textAlign: 'center',
     marginBottom: theme.spacing(3),
+    fontWeight: 'bold',
+    margin: '40px 0',
   },
   projectInfo: {
     marginLeft: '80px',
@@ -183,7 +185,7 @@ const ShowProject = () => {
         </div>
       ) : projectData !== null ? (
         <>
-          <Typography className={classes.projectTitle} style={{ fontWeight: 'bold', margin: '40px 0' }} variant='h4'>{projectData.title}</Typography>
+          <Typography className={classes.projectTitle} variant='h4'>{projectData.title}</Typography>
           <div className={classes.heroContainer}>
             <div className={classes.splideContainer}>
               <ProjectImageSlideshow projectData={projectData} />
@@ -232,7 +234,7 @@ const ShowProject = () => {
           </div>
           <div>
             <h2>おすすめのプロジェクト</h2>
-            <RecommendedProject criteria={'newest'} currentProjectId={project_id}/>
+            <RecommendedProject criteria={'endingSoon'} currentProjectId={project_id}/>
           </div>
         </>
       ) : (

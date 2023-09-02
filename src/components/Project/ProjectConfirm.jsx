@@ -23,7 +23,7 @@ const ProjectConfirm = ({ handleBack }) => {
   }
 
   const handleConfirm = async () => {
-    const confirmResult = window.confirm(isEdit ? 'プロジェクトを更新してもよろしいですか？' : 'プロジェクトを登録してよろしいですか？');
+    const confirmResult = window.confirm(isEdit ? 'プロジェクトを更新してよろしいですか？' : 'プロジェクトを登録してよろしいですか？');
 
     if (confirmResult) {
       try {

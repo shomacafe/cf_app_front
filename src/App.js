@@ -9,6 +9,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#f7f7f7',
   },
   mainContainer: {
+    justifyContent: 'center',
     padding: '25px 0',
     [theme.breakpoints.down('sm')]: {
       padding: '0',
@@ -25,7 +26,7 @@ function App() {
         <CssBaseline />
         <BrowserRouter>
           <Header />
-          <Grid container justifyContent='center' className={classes.mainContainer}>
+          <Grid container className={classes.mainContainer}>
             <Content />
           </Grid>
         </BrowserRouter>
