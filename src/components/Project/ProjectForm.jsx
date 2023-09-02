@@ -39,7 +39,6 @@ const ProjectForm = ({ handleNext }) => {
   const watchedFields = watch()
   const [descriptionError, setDescriptionError] = useState('');
   const [imageError, setImageError] = useState('');
-  const [imageUrls, setImageUrls] = useState([]);
 
   useEffect(() => {
     reset(projectFormData);
@@ -225,8 +224,11 @@ const ProjectForm = ({ handleNext }) => {
                   selected={watchedFields.start_date}
                   onChange={(date) => field.onChange(date)}
                   locale={ja}
-                  dateFormat="yyyy/MM/dd"
+                  dateFormat="yyyy/MM/dd HH:mm"
                   placeholderText="開始日を選択してください"
+                  showTimeSelect
+                  timeFormat='HH:mm'
+                  timeIntervals={60}
                   minDate={new Date()}
                 />
                 {errors.start_date && <p style={{ color: 'red' }}>{errors.start_date.message}</p>}
@@ -245,8 +247,11 @@ const ProjectForm = ({ handleNext }) => {
                   selected={watchedFields.end_date}
                   onChange={(date) => field.onChange(date)}
                   locale={ja}
-                  dateFormat="yyyy/MM/dd"
+                  dateFormat="yyyy/MM/dd HH:mm"
                   placeholderText="終了日を選択してください"
+                  showTimeSelect
+                  timeFormat='HH:mm'
+                  timeIntervals={60}
                   minDate={watchedFields.start_date}
                 />
                 {errors.end_date && <p style={{ color: 'red' }}>{errors.end_date.message}</p>}

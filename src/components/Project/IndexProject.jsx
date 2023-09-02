@@ -1,31 +1,32 @@
 import React, { useEffect, useState } from 'react'
-import clientApi from '../../api/client';
-import Cookies from 'js-cookie';
-import { Grid, TextField, Button, Select, MenuItem, FormControl, InputLabel, ButtonGroup } from '@material-ui/core';
+import clientApi from '../../api/client'
+import { Grid, TextField, Button, ButtonGroup, CircularProgress } from '@material-ui/core'
 import { parseISO } from 'date-fns'
-import ProjectCard from './ProjectCard';
+import ProjectCard from './ProjectCard'
 
+const styles = {
+  spinnerContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: '100vh',
+  },
+};
 
 const IndexProject = () => {
   const [projectData, setProjectData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOption, setSortOption] = useState('newest')
 
   const fetchProjects = async () => {
     try {
-      const headers = {
-        'access-token': Cookies.get('_access_token'),
-        'client': Cookies.get('_client'),
-        'uid': Cookies.get('_uid'),
-      };
-
       const queryParams = {};
       if (searchQuery) {
         queryParams.search = searchQuery;
       }
 
       const response = await clientApi.get('/projects', {
-        headers: headers,
         params: queryParams,
       });
 
@@ -43,6 +44,8 @@ const IndexProject = () => {
       })))
     } catch (error) {
       console.error('API レスポンスの取得に失敗しました', error);
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -83,7 +86,7 @@ const IndexProject = () => {
 
   return (
     <div>
-      <h2>プロジェクト</h2>
+      <h2>プロジェクトをさがす</h2>
       <div style={{display: 'flex'}}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
@@ -106,13 +109,19 @@ const IndexProject = () => {
           </ButtonGroup>
         </Grid>
       </div>
-      <Grid container spacing={2}>
-        {projectData.map((projectData, index) => (
-          <Grid item key={index} xs={6} sm={4} md={3} lg={3}>
-            <ProjectCard projectData={projectData} />
+      {loading ? (
+        <div style={styles.spinnerContainer}>
+          <CircularProgress />
+        </div>
+      ) : (
+          <Grid container spacing={2}>
+            {projectData.map((projectData, index) => (
+              <Grid item key={index} xs={6} sm={4} md={3} lg={3}>
+                <ProjectCard projectData={projectData} />
+              </Grid>
+            ))}
           </Grid>
-        ))}
-      </Grid>
+      )}
     </div>
   )
 }

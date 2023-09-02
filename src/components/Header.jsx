@@ -116,6 +116,18 @@ const Header = () => {
           >
             クラウドファンディングアプリ
           </Typography>
+          <div>
+        <Link to={`/new/project`}>プロジェクトをはじめる</Link>
+      </div>
+      <div>
+        <Link to={`/my_projects`}>作成したプロジェクト一覧</Link>
+      </div>
+      <div>
+        <Link to={`/projects`}>全てのプロジェクト一覧</Link>
+      </div>
+      <div>
+        <Link to={'/purchases'}>購入履歴</Link>
+      </div>
           <AuthButtons />
         </Toolbar>
       </AppBar>
