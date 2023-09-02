@@ -8,12 +8,16 @@ import CreateProject from '../components/Project/CreateProject';
 import CreatedProjectList from '../components/Project/CreatedProjectList';
 import EditProject from '../components/Project/EditProject';
 import { ProjectDataProvider, ReturnDataProvider } from '../contexts/ProjectContext';
+import { ReturnInfoProvider } from '../components/Project/ReturnInfoContext';
+import { UserDataProvider } from '../contexts/UserDataContext';
 import IndexProject from '../components/Project/IndexProject';
 import ShowProject from '../components/Project/ShowProject';
 import ReturnPurchaseConfirm from '../components/Project/ReturnPurchaseConfirm';
-import { ReturnInfoProvider } from '../components/Project/ReturnInfoContext';
 import PurchaseHistory from '../components/Project/PurchaseHistory';
 import PrivateRoute from '../lib/PrivateRoute';
+import MyPage from '../components/User/MyPage';
+import EditAccount from '../components/User/EditAccount';
+import EditProfile from '../components/User/EditProfile';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -70,6 +74,9 @@ const Content = () => {
       <Route index element={<Top />} />
       <Route path='/signup_form' element={<SignUpForm />} />
       <Route path='/signin_form' element={<SignInForm />} />
+      <Route path='/account' element={<PrivateRoute element={<UserDataProvider><MyPage /></UserDataProvider>} />} />
+      <Route path='/account/edit' element={<PrivateRoute element={<UserDataProvider><EditAccount /></UserDataProvider>} />} />
+      <Route path='/profile/edit' element={<PrivateRoute element={<UserDataProvider><EditProfile /></UserDataProvider>} />} />
       <Route path='/new/project' element={<Paper elevation={3} className={classes.paper}><PrivateRoute element={<CreateProjectWrapper />} /></Paper>} />
       <Route path='/projects/edit/:project_id' element={<Paper elevation={3} className={classes.paper}><EditProjectWrapper /></Paper>} />
       <Route path='/my_projects' element={<PrivateRoute element={<div className={classes.nomalPaper}><CreatedProjectList /></div>} />} />

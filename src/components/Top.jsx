@@ -1,5 +1,4 @@
 import React, { useContext } from 'react'
-import { Link } from 'react-router-dom'
 import { AuthContext } from '../lib/AuthContext'
 import RecommendedProject from './Project/RecommendedProject'
 import '@splidejs/splide/css'
