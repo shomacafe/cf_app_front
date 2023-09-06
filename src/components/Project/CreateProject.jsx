@@ -35,7 +35,7 @@ const CreateProject = () => {
 
   return (
     <>
-      <h1>プロジェクト登録</h1>
+      <h2>プロジェクトをはじめる</h2>
       <Stepper activeStep={activeStep} alternativeLabel>
         {steps.map((label) => (
           <Step key={label}>

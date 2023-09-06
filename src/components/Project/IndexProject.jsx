@@ -1,23 +1,54 @@
 import React, { useEffect, useState } from 'react'
 import clientApi from '../../api/client'
-import { Grid, TextField, Button, ButtonGroup, CircularProgress } from '@material-ui/core'
+import { Grid, TextField, Button, ButtonGroup, CircularProgress, makeStyles } from '@material-ui/core'
 import { parseISO } from 'date-fns'
 import ProjectCard from './ProjectCard'
 
-const styles = {
+const useStyles = makeStyles((theme) => ({
   spinnerContainer: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     minHeight: '100vh',
   },
-};
+  searchContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    [theme.breakpoints.down('xs')]: {
+      marginLeft: '10px',
+      flexDirection: 'column',
+      alignItems: 'none',
+    },
+  },
+  searchForm: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  sortButtonGroup: {
+    marginLeft: '10px',
+    [theme.breakpoints.down('xs')]: {
+      marginLeft: 0,
+      marginTop: '10px',
+    },
+    '& button': {
+      [theme.breakpoints.down('xs')]: {
+        padding: '6px 12px',
+      },
+    }
+  },
+  sortButton: {
+    [theme.breakpoints.down('xs')]: {
+      fontSize: '0.5rem',
+    }
+  }
+}));
 
 const IndexProject = () => {
   const [projectData, setProjectData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOption, setSortOption] = useState('newest')
+  const classes = useStyles();
 
   const fetchProjects = async () => {
     try {
@@ -87,41 +118,40 @@ const IndexProject = () => {
   return (
     <div>
       <h2>プロジェクトをさがす</h2>
-      <div style={{display: 'flex'}}>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <TextField
-              label='キーワードで検索'
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <Button variant='contained' color='primary' onClick={() => fetchProjects()}>
-              検索
-            </Button>
-          </Grid>
-        </Grid>
-        <Grid item xs={12}>
-          <ButtonGroup color='primary' aria-label='outlined primary button group'>
-            <Button onClick={() => setSortOption('newest')}>新着順</Button>
-            <Button onClick={() => setSortOption('endingSoon')}>終了日が近い順</Button>
-            <Button onClick={() => setSortOption('totalAmount')}>支援総額順</Button>
-            <Button onClick={() => setSortOption('supportCount')}>支援者順</Button>
-          </ButtonGroup>
-        </Grid>
-      </div>
-      {loading ? (
-        <div style={styles.spinnerContainer}>
-          <CircularProgress />
+      <div className={classes.searchContainer}>
+        <div className={classes.searchForm}>
+          <TextField
+            label='キーワードで検索'
+            value={searchQuery}
+            style={{ width: '200px' }}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <Button variant='contained' color='primary' onClick={() => fetchProjects()}>
+            検索
+          </Button>
         </div>
-      ) : (
-          <Grid container spacing={2}>
-            {projectData.map((projectData, index) => (
-              <Grid item key={index} xs={6} sm={4} md={3} lg={3}>
-                <ProjectCard projectData={projectData} />
-              </Grid>
-            ))}
-          </Grid>
-      )}
+        <ButtonGroup className={classes.sortButtonGroup} color='primary' aria-label='outlined primary button group'>
+          <Button onClick={() => setSortOption('newest')} className={classes.sortButton}>新着順</Button>
+          <Button onClick={() => setSortOption('endingSoon')} className={classes.sortButton}>終了日が近い順</Button>
+          <Button onClick={() => setSortOption('totalAmount')} className={classes.sortButton}>支援総額順</Button>
+          <Button onClick={() => setSortOption('supportCount')} className={classes.sortButton}>支援者順</Button>
+        </ButtonGroup>
+      </div>
+      <div style={{ marginTop: '20px' }}>
+        {loading ? (
+          <div className={ classes.spinnerContainer}>
+            <CircularProgress />
+          </div>
+        ) : (
+            <Grid container>
+              {projectData.map((projectData, index) => (
+                <Grid item key={index} xs={6} sm={4} md={3} lg={3}>
+                  <ProjectCard projectData={projectData} />
+                </Grid>
+              ))}
+            </Grid>
+        )}
+      </div>
     </div>
   )
 }

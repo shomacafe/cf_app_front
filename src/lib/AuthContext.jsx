@@ -21,8 +21,6 @@ export const AuthProvider = ({ children }) => {
         setCurrentUser(response?.data.data);
       }
 
-      console.log('普通のユーザーだよ')
-
       Cookies.set("isGuest", "false");
     } catch (error) {
       console.log(error);

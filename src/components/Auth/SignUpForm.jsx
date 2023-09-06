@@ -16,7 +16,9 @@ import { AuthContext } from '../../lib/AuthContext';
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    marginTop: theme.spacing(6)
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   submitBtn: {
     marginTop: theme.spacing(2),
@@ -76,7 +78,7 @@ const SignUpForm = () => {
   };
 
   return (
-    <>
+    <div className={classes.container}>
       <form noValidate autoComplete='off'>
         <Card className={classes.card}>
           <CardHeader className={classes.header} title='新規登録' />
@@ -141,7 +143,7 @@ const SignUpForm = () => {
           </CardContent>
         </Card>
       </form>
-    </>
+    </div>
   )
 }
 

@@ -207,15 +207,17 @@ const ReturnForm = ({ handleNext, handleBack }) => {
           </Button>
           </div>
         ))}
-        <Button variant="contained" color="primary" onClick={() => append({})}>
+        <Button variant="contained" color="primary" onClick={() => append({})} style={{ margin: '5px 0' }}>
           リターンを追加
         </Button>
-        <Button variant="contained" color="primary" onClick={handleBack}>
-          戻る
-        </Button>
-        <Button type='submit' variant="contained" color="primary">
-          次へ
-        </Button>
+        <div>
+          <Button variant="contained" color="primary" onClick={handleBack}>
+            戻る
+          </Button>
+          <Button type='submit' variant="contained" color="primary" style={{ marginLeft: '10px' }}>
+            次へ
+          </Button>
+        </div>
       </form>
     </Grid>
   </Grid>

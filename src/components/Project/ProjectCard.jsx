@@ -8,24 +8,24 @@ const useStyles = makeStyles((theme) => ({
   projectCard: {
     textDecoration: 'none',
     backgroundColor: 'white',
-    margin: '0 10px',
     borderRadius: '10px',
     boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
     transition: 'box-shadow 0.3s ease',
     '&:hover': {
       boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)',
     },
-    height: '100%',
+    height: '95%',
+    minHeight: '210px',
+    margin: '10px',
     display: 'flex',
     flexDirection: 'column',
+    [theme.breakpoints.down('sm')]: {
+      margin: '12px 6px',
+    },
   },
   projectLink: {
     textDecoration: 'none',
     color: '#555',
-    '&:hover': {
-      textDecoration: 'none',
-      color: '#555',
-    }
   },
   projectImage: {
     width: '100%',
@@ -39,14 +39,13 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: '20px',
     fontSize: '1.25rem',
     [theme.breakpoints.down('md')]: {
+      marginBottom: '10px',
       fontSize: '1rem',
     },
     [theme.breakpoints.down('sm')]: {
-      fontSize: '0.875rem',
+      marginBottom: '5px',
+      fontSize: '0.7rem',
     },
-  },
-  projectDate: {
-    // display: 'flex',
   },
   totalAmount: {
     fontSize: '0.875rem',
@@ -132,6 +131,7 @@ const ProjectCard = ({ projectData, useEdit }) => {
             color='primary'
             component={Link}
             to={`/projects/edit/${projectData.id}`}
+            style={{ margin: '10px' }}
           >
             編集する
           </Button>

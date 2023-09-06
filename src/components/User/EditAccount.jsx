@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react'
 import { TextField, Button, makeStyles, Card, CardHeader, CardContent } from '@material-ui/core';
 import { Controller, useForm } from 'react-hook-form'
 import { useNavigate, Link } from 'react-router-dom';
-import { UserDataContext } from '../../contexts/UserDataContext';
+import { AuthContext } from '../../lib/AuthContext';
 import clientApi from '../../api/client';
 import Cookies from 'js-cookie';
 
@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     width: '100%',
     maxWidth: '800px',
-    margin: '0 auto',
+    margin: 'auto',
     [theme.breakpoints.down('xs')]: {
       padding: '0',
     },
@@ -26,14 +26,19 @@ const useStyles = makeStyles((theme) => ({
   },
   card: {
     padding: theme.spacing(6),
+    [theme.breakpoints.down('xs')]: {
+      padding: 0,
+    }
   },
   form: {
     marginTop: '2rem',
+    display: 'flex',
+    justifyContent: 'space-between',
   }
 }))
 
 const EditAccount = () => {
-  const { userData, loading } = useContext(UserDataContext);
+  const { currentUser } = useContext(AuthContext);
   const { handleSubmit, control } = useForm();
   const classes = useStyles();
   const navigate = useNavigate();
@@ -69,10 +74,6 @@ const EditAccount = () => {
     }
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className={classes.container}>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -82,7 +83,7 @@ const EditAccount = () => {
             <Controller
               name='email'
               control={control}
-              defaultValue={userData.email}
+              defaultValue={currentUser.email}
               render={({ field }) => (
                 <TextField
                   {...field}

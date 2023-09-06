@@ -1,13 +1,24 @@
-import React, { useContext, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useContext, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import { ReturnInfoContext } from './ReturnInfoContext'
 import clientApi from '../../api/client';
 import Cookies from 'js-cookie';
-import { Button } from '@material-ui/core';
+import { Button, makeStyles } from '@material-ui/core';
 import Modal from '@mui/material/Modal';
 
+const useStyles = makeStyles((theme) => ({
+  purchaseConfirmInfo: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  purchaseInfo: {
+    display: 'flex',
+    flexDirection: 'column',
+  }
+}));
+
 const ReturnPurchaseConfirm = () => {
-  const { project_id } = useParams();
   const { returnData } = useContext(ReturnInfoContext);
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(window.location.search);
@@ -16,6 +27,7 @@ const ReturnPurchaseConfirm = () => {
   const selectedQuantity = queryParams.get('quantity');
   const selectedReturn = returnData.find(item => item.id === parseInt(selectedReturnId));
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const classes = useStyles();
 
   const handleConfirm = async () => {
     const confirmResult = window.confirm('リターンを購入してもよろしいですか？');
@@ -51,17 +63,18 @@ const ReturnPurchaseConfirm = () => {
 
   return (
     <>
-      <div>
-        <h2>応援購入するリターン</h2>
-        <p>リターン名：{selectedReturn.name}</p>
-        <p>説明: {selectedReturn.description}</p>
-        <p>{selectedReturn.price.toLocaleString()}円　×　 {selectedQuantity}個　= {(selectedReturn.price * selectedQuantity).toLocaleString()}円</p>
-        <p>数量: {selectedQuantity}</p>
-        <img src={selectedReturn.return_image.url} alt={'selectedReturn.name'} style={{width: '300px'}} />
+      <h2>応援購入するリターン</h2>
+      <div className={classes.purchaseConfirmInfo}>
+        <div className={classes.purchaseInfo}>
+          <img src={selectedReturn.return_image.url} alt={'selectedReturn.name'} style={{width: '300px'}} />
+          <h3>{selectedReturn.name}</h3>
+          <p>{selectedReturn.description}</p>
+          <p>{selectedReturn.price.toLocaleString()}円　×　 {selectedQuantity}個　= {(selectedReturn.price * selectedQuantity).toLocaleString()}円</p>
+        </div>
+        <Button variant="contained" color="primary" style={{ maxWidth: '200px', margin: '20px 0' }} onClick={handleConfirm}>
+          リターン購入を確定する
+        </Button>
       </div>
-      <Button variant="contained" color="primary" onClick={handleConfirm}>
-        リターン購入を確定する
-      </Button>
       <Modal open={showSuccessModal} onClose={() => navigate(`/projects/${selectedProjectId}`)}>
         <div className='modal-overlay'>
           <div className='modal-content'>

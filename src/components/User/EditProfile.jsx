@@ -1,17 +1,17 @@
 import React, { useState, useContext, useEffect } from 'react'
-import { TextField, Button, makeStyles, Card, CardHeader, CardContent, Avatar } from '@material-ui/core';
+import { TextField, Button, makeStyles, Card, CardHeader, CardContent, Avatar } from '@material-ui/core'
 import { Controller, useForm } from 'react-hook-form'
-import { useNavigate, Link } from 'react-router-dom';
-import { UserDataContext } from '../../contexts/UserDataContext';
-import clientApi from '../../api/client';
-import Cookies from 'js-cookie';
+import { useNavigate, Link } from 'react-router-dom'
+import { AuthContext } from '../../lib/AuthContext'
+import clientApi from '../../api/client'
+import Cookies from 'js-cookie'
 
 const useStyles = makeStyles((theme) => ({
   container: {
     padding: theme.spacing(2),
     width: '100%',
     maxWidth: '800px',
-    margin: '0 auto',
+    margin: 'auto',
     [theme.breakpoints.down('xs')]: {
       padding: '0',
     },
@@ -26,9 +26,14 @@ const useStyles = makeStyles((theme) => ({
   },
   card: {
     padding: theme.spacing(6),
+    [theme.breakpoints.down('xs')]: {
+      padding: 0,
+    }
   },
   form: {
     marginTop: '2rem',
+    display: 'flex',
+    justifyContent: 'space-between',
   },
   avatarContainer: {
     display: 'flex',
@@ -48,13 +53,11 @@ const useStyles = makeStyles((theme) => ({
 
 const EditProfile = () => {
   const { handleSubmit, control, setValue, getValues } = useForm();
-  const { userData, loading } = useContext(UserDataContext);
-  const [avatarPreview, setAvatarPreview] = useState(userData.userImage?.url || '/default_user_icon.png')
+  const { currentUser } = useContext(AuthContext);
+  const [avatarPreview, setAvatarPreview] = useState(currentUser.userImage?.url || '/default_user_icon.png')
   const [userImage, setUserImage] = useState();
   const classes = useStyles();
   const navigate = useNavigate();
-
-  console.log('userData', userData)
 
   const onSubmit = async (data) => {
     const confirmResult = window.confirm('プロフィールを更新してよろしいですか？');
@@ -102,10 +105,6 @@ const EditProfile = () => {
     }
   }
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className={classes.container}>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -136,7 +135,7 @@ const EditProfile = () => {
             <Controller
               name='name'
               control={control}
-              defaultValue={userData.name}
+              defaultValue={currentUser.name}
               render={({ field }) => (
                 <TextField
                   {...field}
@@ -150,7 +149,7 @@ const EditProfile = () => {
               <Controller
                 name="profile"
                 control={control}
-                defaultValue={userData.profile}
+                defaultValue={currentUser.profile}
                 render={({ field }) => (
                   <TextField
                     {...field}
