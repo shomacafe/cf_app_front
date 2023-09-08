@@ -6,7 +6,7 @@ import { Editor, convertFromRaw, EditorState } from 'draft-js'
 import ReturnInfo from './ReturnInfo'
 import { ReturnInfoContext } from './ReturnInfoContext'
 import { AuthContext } from '../../lib/AuthContext'
-import {Typography, makeStyles, CircularProgress } from '@material-ui/core'
+import {Typography, makeStyles, CircularProgress, Avatar, CardContent } from '@material-ui/core'
 import ProjectImageSlideshow from './ProjectImageSlideshow'
 import RecommendedProject from './RecommendedProject'
 
@@ -18,6 +18,9 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: theme.spacing(3),
+    [theme.breakpoints.down('xs')]: {
+      flexDirection: 'column',
+    }
   },
   heroImage: {
     width: '100%',
@@ -27,14 +30,24 @@ const useStyles = makeStyles((theme) => ({
   mainContainer: {
     display: 'flex',
     marginBottom: theme.spacing(3),
+    [theme.breakpoints.down('xs')]: {
+      flexDirection: 'column',
+    }
   },
   mainContent: {
     flexGrow: 1,
     marginRight: theme.spacing(3),
+    [theme.breakpoints.down('xs')]: {
+      margin: 0,
+    }
   },
   sideBar: {
     flexShrink: 0,
     width: '350px',
+    [theme.breakpoints.down('xs')]: {
+      width: '100%',
+      padding: '0 8px'
+    }
   },
   projectTitle: {
     textAlign: 'center',
@@ -45,6 +58,60 @@ const useStyles = makeStyles((theme) => ({
   projectInfo: {
     marginLeft: '80px',
     marginBottom: theme.spacing(2),
+    [theme.breakpoints.down('sm')]: {
+      textAlign: 'center',
+      margin: '10px'
+    },
+  },
+  totalAmount: {
+    fontWeight: 'bold',
+    [theme.breakpoints.down('xs')]: {
+      padding: '0 50px',
+      fontWeight: 'normal',
+      fontSize: '40px',
+    },
+  },
+  goalAmount: {
+    [theme.breakpoints.down('xs')]: {
+      display: 'flex',
+      justifyContent: 'space-between',
+    },
+  },
+  supporterAndGorl: {
+    [theme.breakpoints.down('xs')]: {
+      display: 'flex',
+      justifyContent: 'space-between',
+    },
+  },
+  supporter: {
+    [theme.breakpoints.down('xs')]: {
+      display: 'flex',
+    },
+  },
+  timeLimit: {
+    [theme.breakpoints.down('xs')]: {
+      display: 'flex',
+    },
+  },
+  goalAmountText: {
+    [theme.breakpoints.down('xs')]: {
+      fontSize: '13px',
+    },
+  },
+  projectInfoText: {
+    marginTop: '20px',
+    [theme.breakpoints.down('xs')]: {
+      margin: 0,
+      fontSize: '13px',
+    },
+  },
+  projectInfoTextItem: {
+    fontWeight: 'bold',
+    [theme.breakpoints.down('xs')]: {
+      fontWeight: 'normal',
+      lineHeight: '1.5',
+      fontSize: '13px',
+    },
   },
   descriptionEditor: {
     marginBottom: theme.spacing(3),
@@ -52,6 +119,32 @@ const useStyles = makeStyles((theme) => ({
   splideContainer: {
     width: '100%',
     maxWidth: '650px',
+  },
+
+  // メインコンテンツ
+  avatar: {
+    width: '80px',
+    height: '80px',
+    marginBottom: '1rem'
+  },
+  presenterCard: {
+    display: 'flex',
+    alignItems: 'center',
+    marginTop: '10px',
+    backgroundColor: '#f7f7f7',
+    padding: '10px',
+    borderRadius: '10px'
+  },
+  userDetails: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginRight: '20px',
+  },
+  normalCard: {
+    marginTop: '10px',
+    backgroundColor: '#f7f7f7',
+    padding: '10px 20px',
+    borderRadius: '10px'
   },
   spinnerContainer: {
     display: 'flex',
@@ -145,7 +238,11 @@ const ShowProject = () => {
   }, [loading, project_id])
 
   if (loading) {
-    return <CircularProgress />
+    return (
+      <div className={ classes.spinnerContainer}>
+        <CircularProgress />
+      </div>
+    )
   }
 
   // 開始日と終了日を適切に表示
@@ -175,7 +272,6 @@ const ShowProject = () => {
 
   // プログレスバーと達成の有無
   const progress = projectData ? Math.min((projectData.total_amount / projectData.goal_amount) * 100, 100) : 0;
-  const isAchived = projectData ? (progress === 100) : false;
 
   return (
     <>
@@ -193,34 +289,55 @@ const ShowProject = () => {
 
             <div className={classes.projectInfo}>
               <Typography variant='h6'>応援購入総額</Typography>
-              <Typography variant='h3' style={{ fontWeight: 'bold' }}>{projectData.total_amount && projectData.total_amount.toLocaleString()}円</Typography>
-              <progress value={progress} max='100'></progress>
-              <Typography>達成率{projectData.success_rate}%</Typography>
-              <Typography>目標金額は{projectData.goal_amount && projectData.goal_amount.toLocaleString()}円</Typography>
-              <Typography>{isAchived ? <p>Success!</p> : ''}</Typography>
-              <Typography variant='h6' style={{ marginTop: '20px' }}>支援者数</Typography>
-              <Typography variant='h3' style={{ fontWeight: 'bold' }}>{projectData.support_count}人</Typography>
-              {projectData.start_date > new Date() || projectData.end_date < new Date() ? (
-                <p></p>
-               ) : (
-                <Typography variant='h6' style={{ marginTop: '20px' }}>終了まで残り</Typography>
-               )
-              }
-              <Typography variant='h3' style={{ fontWeight: 'bold' }}>{remainingText}</Typography>
+              <Typography variant='h3' className={classes.totalAmount} style={{ fontWeight: 'bold' }}>{projectData.total_amount && projectData.total_amount.toLocaleString()}円</Typography>
+              <progress style={{ width: '100%' }} value={progress} max='100'></progress>
+              <div className={classes.projectInfoItem}>
+                <div className={classes.goalAmount}>
+                  <Typography className={classes.goalAmountText}>達成率{projectData.success_rate}%</Typography>
+                  <Typography className={classes.goalAmountText}>目標金額は{projectData.goal_amount && projectData.goal_amount.toLocaleString()}円</Typography>
+                </div>
+                <div className={classes.supporterAndGorl}>
+                  <div className={classes.supporter}>
+                    <Typography variant='h6' className={classes.projectInfoText}>支援者数</Typography>
+                    <Typography variant='h3' className={classes.projectInfoTextItem}>{projectData.support_count}人</Typography>
+                  </div>
+                  <div className={classes.timeLimit}>
+                    {projectData.start_date > new Date() || projectData.end_date < new Date() ? (
+                      <p></p>
+                    ) : (
+                      <Typography variant='h6' className={classes.projectInfoText}>終了まで残り</Typography>
+                    )
+                    }
+                    <Typography variant='h3' className={classes.projectInfoTextItem}>{remainingText}</Typography>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div className={classes.mainContainer}>
             <div className={classes.mainContent}>
-            <Typography variant='h5' style={{ fontWeight: 'bold' }}>ピックアップ</Typography>
-              {projectData.catch_copies.map((catchCopy, index) => (
-                <p key={index}>{catchCopy}</p>
-              ))}
               <Typography variant='h5' style={{ fontWeight: 'bold', marginTop: '40px' }}>プレゼンター</Typography>
-              <div>
-                <p>プロジェクト作成者：{projectData.user && projectData.user.name ? projectData.user.name : ''}</p>
+              <div className={classes.presenterCard}>
+                <div className={classes.userDetails}>
+                  {projectData.user && projectData.user.userImage.url ? (
+                    <Avatar className={classes.avatar} alt='ユーザーアイコン（プレゼンター）' src={projectData.user.userImage.url} />
+                  ) : (
+                    <img src="/default_user_icon.png" alt="デフォルトユーザーアイコン (プレゼンター)" style={{ width: '80px' }} />
+                  )}
+                  <p>{projectData.user && projectData.user.name ? projectData.user.name : ''}</p>
+                </div>
+                <p>{projectData.user && projectData.user.profile ? projectData.user.profile : ''}</p>
+              </div>
+              <Typography variant='h5' style={{ fontWeight: 'bold', marginTop: '30px' }}>ピックアップ</Typography>
+              <div className={classes.normalCard}>
+                {projectData.catch_copies.map((catchCopy, index) => (
+                  <p key={index}>{catchCopy}</p>
+                ))}
               </div>
               <Typography variant='h5' style={{ fontWeight: 'bold', marginTop: '30px' }}>プロジェクト概要</Typography>
-              <Editor editorState={descriptionEditorState} readOnly />
+              <div className={classes.normalCard}>
+                <Editor editorState={descriptionEditorState} readOnly />
+              </div>
               <p>
                 このプロジェクトの実施期間は
                 {formattedStartDate}〜

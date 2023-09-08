@@ -48,7 +48,9 @@ const RecommendedProject = ({ criteria, currentProjectId, useSlideshow }) => {
   return (
     <>
       {loading ? (
-        <CircularProgress />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+          <CircularProgress />
+        </div>
       ) : useSlideshow ? (
           <Splide
             options={{
@@ -61,7 +63,7 @@ const RecommendedProject = ({ criteria, currentProjectId, useSlideshow }) => {
               width: '100%',
               breakpoints: {
                 768: {
-                  perPage: 1,
+                  perPage: 1.5,
                 },
               },
             }}
@@ -73,7 +75,7 @@ const RecommendedProject = ({ criteria, currentProjectId, useSlideshow }) => {
             ))}
           </Splide>
         ) : (
-          <Grid container spacing={2}>
+          <Grid container>
             {recommendedProjects.map((projectData, index) => (
               <Grid item key={index} xs={6} sm={4} md={3} lg={3}>
                 <ProjectCard projectData={projectData} />

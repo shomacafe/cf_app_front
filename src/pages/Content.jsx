@@ -19,6 +19,7 @@ import PrivateRoute from '../lib/PrivateRoute';
 import MyPage from '../components/User/MyPage';
 import EditAccount from '../components/User/EditAccount';
 import EditProfile from '../components/User/EditProfile';
+import ScrollToTop  from './ScrollToTop';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -28,12 +29,11 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(3),
     width: '100%',
     maxWidth: '1300px',
-    minHeight: '1000px',
     margin: '0 auto',
     [theme.breakpoints.down('sm')]: {
       backgroundColor: 'white',
       boxShadow: 'none',
-      padding: '',
+      padding: 0,
     },
   },
   nomalPaper: {
@@ -71,21 +71,24 @@ const Content = () => {
   const classes = useStyles();
 
   return (
-    <Routes>
-      <Route index element={<Top />} />
-      <Route path='/signup_form' element={<SignUpForm />} />
-      <Route path='/signin_form' element={<SignInForm />} />
-      <Route path='/account' element={<PrivateRoute element={<UserDataProvider><MyPage /></UserDataProvider>} />} />
-      <Route path='/account/edit' element={<PrivateRoute element={<UserDataProvider><EditAccount /></UserDataProvider>} />} />
-      <Route path='/profile/edit' element={<PrivateRoute element={<UserDataProvider><EditProfile /></UserDataProvider>} />} />
-      <Route path='/new/project' element={<Paper elevation={3} className={classes.paper}><PrivateRoute element={<CreateProjectWrapper />} /></Paper>} />
-      <Route path='/projects/edit/:project_id' element={<Paper elevation={3} className={classes.paper}><EditProjectWrapper /></Paper>} />
-      <Route path='/my_projects' element={<PrivateRoute element={<div className={classes.nomalPaper}><CreatedProjectList /></div>} />} />
-      <Route path='/projects' element={<Paper elevation={3} className={classes.paper}><IndexProject /></Paper>} />
-      <Route path='/projects/:project_id' element={<Paper elevation={3} className={classes.paper}><ReturnInfoProvider><ShowProject /></ReturnInfoProvider></Paper>} />
-      <Route path='/purchase/confirm' element={<Paper elevation={3} className={classes.paper}><ReturnInfoProvider><ReturnPurchaseConfirm /></ReturnInfoProvider></Paper>} />
-      <Route path='/purchases' element={<Paper elevation={3} className={classes.paper}><PrivateRoute element={<PurchaseHistory />} /></Paper>} />
-    </Routes>
+    <>
+      <ScrollToTop />
+      <Routes>
+        <Route index element={<Top />} />
+        <Route path='/signup_form' element={<SignUpForm />} />
+        <Route path='/signin_form' element={<SignInForm />} />
+        <Route path='/account' element={<PrivateRoute element={<MyPage />} />} />
+        <Route path='/account/edit' element={<PrivateRoute element={<EditAccount />} />} />
+        <Route path='/profile/edit' element={<PrivateRoute element={<EditProfile />} />} />
+        <Route path='/new/project' element={<Paper elevation={3} className={classes.paper}><PrivateRoute element={<CreateProjectWrapper />} /></Paper>} />
+        <Route path='/projects/edit/:project_id' element={<Paper elevation={3} className={classes.paper}><EditProjectWrapper /></Paper>} />
+        <Route path='/my_projects' element={<PrivateRoute element={<div className={classes.nomalPaper}><CreatedProjectList /></div>} />} />
+        <Route path='/projects' element={<Paper elevation={3} className={classes.paper}><IndexProject /></Paper>} />
+        <Route path='/projects/:project_id' element={<Paper elevation={3} className={classes.paper}><ReturnInfoProvider><ShowProject /></ReturnInfoProvider></Paper>} />
+        <Route path='/purchase/confirm' element={<Paper elevation={3} className={classes.paper}><ReturnInfoProvider><ReturnPurchaseConfirm /></ReturnInfoProvider></Paper>} />
+        <Route path='/purchases' element={<Paper elevation={3} className={classes.paper}><PrivateRoute element={<PurchaseHistory />} /></Paper>} />
+      </Routes>
+    </>
   )
 }
 

@@ -133,9 +133,10 @@ const ProjectForm = ({ handleNext }) => {
   // };
 
   return (
-    <Grid container spacing={10}>
+    <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+    {/* <Grid container spacing={10}>
       <Grid item sm={2} />
-      <Grid item lg={8} sm={8}>
+      <Grid item lg={8} sm={8}> */}
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* タイトル */}
           <Controller
@@ -309,8 +310,9 @@ const ProjectForm = ({ handleNext }) => {
             次へ
           </Button>
         </form>
-      </Grid>
-    </Grid>
+      {/* </Grid>
+    </Grid> */}
+    </div>
   )
 }
 

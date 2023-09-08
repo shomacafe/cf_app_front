@@ -1,39 +1,76 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import Cookies from "js-cookie"
 
-import { makeStyles, Theme } from "@material-ui/core/styles"
-
-import AppBar from "@material-ui/core/AppBar"
-import Toolbar from "@material-ui/core/Toolbar"
-import Typography from "@material-ui/core/Typography"
-import Button from "@material-ui/core/Button"
-import IconButton from "@material-ui/core/IconButton"
-import MenuIcon from "@material-ui/icons/Menu"
-
+import { makeStyles, AppBar, Toolbar, Typography, Button, IconButton, MenuItem, Avatar } from "@material-ui/core"
+import MenuIcon from '@material-ui/icons/Menu';
+import Menu from '@material-ui/core/Menu';
 import { AuthContext } from '../lib/AuthContext';
 
 import { signOut } from '../api/auth';
 import GuestLoginButton from './Auth/GuestLoginButton';
+import { UserDataContext } from '../contexts/UserDataContext';
 
 const useStyles = makeStyles((theme) => ({
   iconButton: {
     marginRight: theme.spacing(2),
   },
-  title: {
-    flexGrow: 1,
-    textDecoration: "none",
-    color: "inherit"
+  appBar: {
+    padding: '10px 16px',
+    [theme.breakpoints.down('xs')]: {
+      padding: '10px 0'
+    }
+  },
+  headerImageArea: {
+    [theme.breakpoints.down('xs')]: {
+      margin: 'auto',
+    }
+  },
+  headerImage: {
+    maxWidth: '200px',
+    height: '50px',
+  },
+  avatar: {
+    marginLeft: 'auto',
+    cursor: 'pointer',
   },
   linkBtn: {
     textTransform: "none"
-  }
+  },
+  menuLinks: {
+    display: 'flex',
+    alignItems: 'center',
+    '& > *': {
+      marginRight: theme.spacing(2),
+      textDecoration: 'none',
+      color: 'inherit',
+    }
+  },
+  signOutHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    [theme.breakpoints.down('xs')]: {
+      flexDirection: 'column',
+    }
+  },
+  singInHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  userInfo: {
+    display: 'flex',
+    alignItems: 'center',
+    [theme.breakpoints.down('xs')]: {
+      margin: '10px auto',
+    }
+  },
 }))
 
 const Header = () => {
-  const { loading, isSignedIn, setIsSignedIn } = useContext(AuthContext);
+  const { loading, isSignedIn, setIsSignedIn, currentUser } = useContext(AuthContext);
   const classes = useStyles();
   const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = useState(null);
 
   console.log('loading', loading)
   console.log('isSignedIn', isSignedIn)
@@ -64,17 +101,7 @@ const Header = () => {
 
   const AuthButtons = () => {
     if (!loading) {
-      if (isSignedIn) {
-        return (
-          <Button
-            color='inherit'
-            className={classes.linkBtn}
-            onClick={handleSignOut}
-          >
-            ログアウト
-          </Button>
-        )
-      } else {
+      if (!isSignedIn) {
         return (
           <>
             <Button
@@ -95,49 +122,90 @@ const Header = () => {
             </Button>
             <GuestLoginButton />
           </>
-        );
+        )
       }
     }
   };
 
   return (
-    <>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            edge="start"
-            className={classes.iconButton}
-            color="inherit"
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography
-            component={Link}
-            to="/"
-            variant="h6"
-            className={classes.title}
-          >
-            クラウドファンディングアプリ
-          </Typography>
-          <div>
-            <Link to={`/new/project`}>プロジェクトをはじめる</Link>
+    <div>
+      <AppBar position="static" className={classes.appBar}>
+        <div className={isSignedIn ? classes.singInHeader : classes.signOutHeader}>
+          <div className={classes.headerImageArea}>
+            <Link to='/'>
+              <img
+                src="/lastBoss.png"
+                alt="ヘッダーロゴ"
+                className={classes.headerImage}
+              />
+            </Link>
           </div>
-          <div>
-            <Link to={`/my_projects`}>作成したプロジェクト一覧</Link>
+          <div className={classes.userInfo}>
+            <AuthButtons />
+            <p>{isSignedIn ? currentUser && currentUser.name : '' }</p>
+            {isSignedIn &&
+              <Avatar
+                className={classes.avatar}
+                alt='ユーザーアイコン'
+                src={currentUser && currentUser.userImage.url || '/default_user_icon.png'}
+                onClick={(e) => setAnchorEl(e.currentTarget)}
+              />
+            }
           </div>
-          <div>
-            <Link to={`/projects`}>全てのプロジェクト一覧</Link>
-          </div>
-          <div>
-            <Link to={'/purchases'}>購入履歴</Link>
-          </div>
-          <div>
-            <Link to={'/account'}>　アカウント</Link>
-          </div>
-          <AuthButtons />
-        </Toolbar>
+        </div>
       </AppBar>
-    </>
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={() => setAnchorEl(null)}
+        style={{ margin: '40px auto' }}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+      >
+        { isSignedIn ? (
+          <>
+            <MenuItem component={Link} to='/new/project' onClick={() => setAnchorEl(null)}>
+              プロジェクトをはじめる
+            </MenuItem>
+            <MenuItem component={Link} to="/my_projects" onClick={() => setAnchorEl(null)}>
+              作成したプロジェクト一覧
+            </MenuItem>
+            <MenuItem component={Link} to="/projects" onClick={() => setAnchorEl(null)}>
+              プロジェクトをさがす
+            </MenuItem>
+            <MenuItem component={Link} to="/purchases" onClick={() => setAnchorEl(null)}>
+              購入履歴
+            </MenuItem>
+            <MenuItem component={Link} to="/account" onClick={() => setAnchorEl(null)}>
+              アカウント
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                setAnchorEl(null);
+                handleSignOut();
+              }}
+            >
+              ログアウト
+            </MenuItem>
+          </>
+        ) : (
+          <>
+            <MenuItem component={Link} to='/new/project' onClick={() => setAnchorEl(null)}>
+              プロジェクトをはじめる
+            </MenuItem>
+            <MenuItem component={Link} to="/projects" onClick={() => setAnchorEl(null)}>
+              プロジェクトをさがす
+            </MenuItem>
+          </>
+        )}
+      </Menu>
+    </div>
   )
 }
 

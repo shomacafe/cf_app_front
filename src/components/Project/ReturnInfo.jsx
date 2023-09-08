@@ -5,7 +5,7 @@ import { Typography, Button, Select, MenuItem, FormControl, InputLabel } from '@
 
 const ReturnInfo = ({ project_id, isPurchaseDisabled }) => {
   const {returnData} = useContext(ReturnInfoContext);
-  const [selectedQuantity, setSelectedQuantity] = useState();
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
 
   const handleQuantityChange = (e) => {
     setSelectedQuantity(e.target.value);
@@ -35,7 +35,6 @@ const ReturnInfo = ({ project_id, isPurchaseDisabled }) => {
               </FormControl>
               <Button
                 variant='contained'
-                size='large'
                 color='primary'
                 component={Link}
                 to={`/purchase/confirm?return_id=${returnItem.id}&project_id=${project_id}&quantity=${selectedQuantity}`}
@@ -45,7 +44,6 @@ const ReturnInfo = ({ project_id, isPurchaseDisabled }) => {
               </Button>
             </div>
             <Typography style={{display: 'flex', justifyContent: 'right'}}>支援者：{returnItem.supporter_count}人</Typography>
-            {/* TODO 数量選択 */}
           </div>
         )
       })}

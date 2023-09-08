@@ -17,7 +17,9 @@ import GuestLoginButton from './GuestLoginButton'
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    marginTop: theme.spacing(6)
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   submitBtn: {
     marginTop: theme.spacing(2),
@@ -81,7 +83,7 @@ const SignInForm = () => {
   };
 
   return (
-    <>
+    <div className={classes.container}>
       <form noValidate autoComplete='off'>
         <Card className={classes.card}>
           <CardHeader className={classes.header} title='ログイン' />
@@ -128,7 +130,7 @@ const SignInForm = () => {
           </CardContent>
         </Card>
       </form>
-    </>
+    </div>
   )
 }
 

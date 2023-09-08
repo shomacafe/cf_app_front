@@ -64,7 +64,7 @@ const CreatedProjectList = () => {
           <CircularProgress />
         </div>
       ) : (
-        <Grid container spacing={2}>
+        <Grid container>
           {projectData.map((projectData, index) => (
             <Grid item key={index} xs={6} sm={4} md={3} lg={3}>
               <ProjectCard projectData={projectData} useEdit={'useEdit'} />

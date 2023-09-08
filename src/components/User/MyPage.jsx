@@ -4,11 +4,10 @@ import { Link } from 'react-router-dom'
 import {Typography, makeStyles, CircularProgress, Button, Card, CardContent, CardHeader, Avatar } from '@material-ui/core'
 import Cookies from 'js-cookie'
 import clientApi from '../../api/client'
-import { UserDataContext } from '../../contexts/UserDataContext'
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    marginTop: theme.spacing(6),
+    margin: 'auto',
     maxWidth: 800,
     width: '100%',
   },
@@ -64,11 +63,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const MyPage = () => {
-  const { userData, setUserData, loading } = useContext(UserDataContext);
-  const { isGuest } = useContext(AuthContext);
+  const { currentUser, setCurrentUser, loading } = useContext(AuthContext);
+  const initialIsGuest = Cookies.get('isGuest') === 'true';
+  const [isGuest, setIsGuest] = useState(initialIsGuest);
   const classes = useStyles();
-
-  console.log('isGuest', isGuest)
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -79,12 +77,12 @@ const MyPage = () => {
           'uid': Cookies.get('_uid'),
         };
 
-        const userId = userData.id
+        const userId = currentUser.id
         const response = await clientApi.get(`/users/${userId}`, {
           headers: headers,
         });
 
-        setUserData(response.data);
+        setCurrentUser(response.data);
         console.log('ユーザー', response.data);
       } catch (error) {
         console.error('API レスポンスの取得に失敗しました', error);
@@ -120,8 +118,8 @@ const MyPage = () => {
             <div className={classes.infoRow}>
               <Typography className={classes.label}>アイコン</Typography>
               <Typography className={classes.value}>
-                {userData.userImage.url ? (
-                  <Avatar className={classes.avatar} alt='ユーザーアイコン' src={userData.userImage.url} />
+                {currentUser.userImage.url ? (
+                  <Avatar className={classes.avatar} alt='ユーザーアイコン' src={currentUser.userImage.url} />
                 ) : (
                   <img src="/default_user_icon.png" alt="Default User Icon" style={{ width: '100px' }} />
                 )}
@@ -129,11 +127,11 @@ const MyPage = () => {
             </div>
             <div className={classes.infoRow}>
               <Typography className={classes.label}>名前</Typography>
-              <Typography className={classes.value}>{userData.name}</Typography>
+              <Typography className={classes.value}>{currentUser.name}</Typography>
             </div>
             <div className={classes.infoRow}>
               <Typography className={classes.label}>自己紹介</Typography>
-              <Typography className={classes.value}>{userData.profile}</Typography>
+              <Typography className={classes.value}>{currentUser.profile ? currentUser.profile : ''}</Typography>
             </div>
             <div className={classes.headline}>
               <h2>アカウント</h2>
@@ -150,7 +148,7 @@ const MyPage = () => {
             </div>
             <div className={classes.infoRow}>
               <Typography className={classes.label}>メールアドレス</Typography>
-              <Typography className={classes.value}>{userData.email}</Typography>
+              <Typography className={classes.value}>{currentUser.email}</Typography>
             </div>
             <div className={classes.infoRow}>
               <Typography className={classes.label}>パスワード</Typography>
