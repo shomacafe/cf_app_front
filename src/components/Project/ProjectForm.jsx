@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { Grid, Button, TextField } from '@material-ui/core';
+import { Grid, Button, TextField, IconButton } from '@material-ui/core';
 import { ProjectDataContext } from '../../contexts/ProjectContext';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -82,6 +82,11 @@ const ProjectForm = ({ handleNext }) => {
     }
   };
 
+  const removeCatchCopy = (indexToRemove) => {
+    const newCatchCopies = watchedFields.catch_copies.filter((_, index) => index !== indexToRemove);
+    setValue('catch_copies', newCatchCopies);
+  };
+
   // 画像選択時のハンドラー
   const addProjectImage = async (e) => {
     const files = e.target.files;
@@ -134,15 +139,18 @@ const ProjectForm = ({ handleNext }) => {
 
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-    {/* <Grid container spacing={10}>
-      <Grid item sm={2} />
-      <Grid item lg={8} sm={8}> */}
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* タイトル */}
           <Controller
             name="title"
             control={control}
-            rules={{required:  'タイトルを入力してください'}}
+            rules={{
+              required:  'タイトルを入力してください',
+              maxLength: {
+                value: 30,
+                message: 'タイトルは30文字以内で入力してください'
+              }
+            }}
             render={({field}) => (
               <TextField
                 {...field}
@@ -160,13 +168,18 @@ const ProjectForm = ({ handleNext }) => {
             name="catch_copies"
             control={control}
             rules={{
-              required: '少なくとも1つのキャッチコピーが必要です',
+              minLength: {
+                value: 1,
+                message: '少なくとも1つのキャッチコピーが必要です',
+              },
               validate: (value) => {
-                if(value.length === 0) {
-                  return 'キャッチコピー1は必須です';
-                }
-                if (value.length > 3) {
-                  return 'キャッチコピーは最大3つまでです';
+                for (const copy of value) {
+                  if (copy.length === 0) {
+                    return 'キャッチコピーを入力してください';
+                  }
+                  if (copy.length > 30) {
+                    return 'キャッチコピーは30文字までです';
+                  }
                 }
                 return true;
               },
@@ -174,21 +187,31 @@ const ProjectForm = ({ handleNext }) => {
             render={({ field }) => (
               <div>
                 {field.value.map((copy, index) => (
-                  <TextField
-                    key={index}
-                    value={copy}
-                    onChange={(e) => {
-                      const newCatchCopies = [...field.value];
-                      newCatchCopies[index] = e.target.value;
-                      field.onChange(newCatchCopies);
-                    }}
-                    label={`キャッチコピー${index + 1}`}
-                    fullWidth
-                    margin="normal"
-                    placeholder={`キャッチコピー${index + 1}を入力してください`}
-                    error={!!errors.catch_copies?.[index]}
-                    helperText={errors.catch_copies?.[index]?.message}
-                  />
+                  <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
+                    <TextField
+                      key={index}
+                      value={copy}
+                      onChange={(e) => {
+                        const newCatchCopies = [...field.value];
+                        newCatchCopies[index] = e.target.value;
+                        field.onChange(newCatchCopies);
+                      }}
+                      label={`キャッチコピー${index + 1}`}
+                      fullWidth
+                      margin="normal"
+                      placeholder={`キャッチコピー${index + 1}を入力してください`}
+                      error={!!errors.catch_copies?.[index]}
+                      helperText={errors.catch_copies?.[index]?.message}
+                    />
+                    {index > 0 && ( // 最初のキャッチコピー以外に削除ボタンを表示
+                    <IconButton
+                      onClick={() => removeCatchCopy(index)}
+                      aria-label={`キャッチコピー${index + 1}を削除`}
+                    >
+                      削除
+                    </IconButton>
+                  )}
+                </div>
                 ))}
                 {errors.catch_copies && <p style={{ color: 'red' }}>{errors.catch_copies.message}</p>}
                 <Button type="button" disabled={field.value.length >= 3} onClick={addCatchCopyField} variant="contained" color="primary">
@@ -201,7 +224,19 @@ const ProjectForm = ({ handleNext }) => {
           <Controller
             name="goal_amount"
             control={control}
-            rules={{required: '目標金額は必須です'}}
+            rules={{
+              required: '目標金額は必須です',
+              pattern: {
+                value: /^[0-9]+$/,
+                message: '整数を入力してください',
+              },
+              validate: (value) => {
+                if (value <= 0) {
+                  return '0より大きい数字で入力してください'
+                }
+                return true;
+              },
+            }}
             render={({field}) => (
               <TextField
                 {...field}
@@ -310,8 +345,6 @@ const ProjectForm = ({ handleNext }) => {
             次へ
           </Button>
         </form>
-      {/* </Grid>
-    </Grid> */}
     </div>
   )
 }

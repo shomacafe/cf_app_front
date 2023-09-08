@@ -34,7 +34,10 @@ const useStyles = makeStyles((theme) => ({
     marginTop: '2rem',
     display: 'flex',
     justifyContent: 'space-between',
-  }
+  },
+  errorText: {
+    color: 'red',
+  },
 }))
 
 const EditAccount = () => {
@@ -42,6 +45,9 @@ const EditAccount = () => {
   const { handleSubmit, control } = useForm();
   const classes = useStyles();
   const navigate = useNavigate();
+  const [errorMessages, setErrorMessages] = useState({
+    password: '',
+  });
 
   const onSubmit = async (data) => {
     const confirmResult = window.confirm('アカウントを更新してよろしいですか？');
@@ -69,6 +75,15 @@ const EditAccount = () => {
         alert('アカウントを更新しましたので、再度ログインをお願いいたします。')
         navigate('/signin_form');
       } catch (error) {
+        if (error.response && error.response.data && error.response.data.errors) {
+          const apiErrors = error.response.data.errors
+
+          setErrorMessages({
+            password: apiErrors.find((e) => e.includes('パスワード')) || '',
+          })
+        }
+
+        console.log(errorMessages)
         console.error('API レスポンスの取得に失敗しました', error);
       }
     }
@@ -119,6 +134,7 @@ const EditAccount = () => {
                     label="新しいパスワード"
                     variant="outlined"
                     fullWidth
+                    helperText={<span className={classes.errorText}>{errorMessages.password}</span>}
                   />
                 )}
               />
@@ -134,6 +150,7 @@ const EditAccount = () => {
                     label="新しいパスワード（確認用）"
                     variant="outlined"
                     fullWidth
+                    helperText={<span className={classes.errorText}>{errorMessages.password}</span>}
                   />
                 )}
               />

@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react'
-import { TextField, Button, makeStyles, Card, CardHeader, CardContent, Avatar } from '@material-ui/core'
+import { TextField, Button, makeStyles, Card, CardHeader, CardContent, Avatar, FormHelperText } from '@material-ui/core'
 import { Controller, useForm } from 'react-hook-form'
 import { useNavigate, Link } from 'react-router-dom'
 import { AuthContext } from '../../lib/AuthContext'
@@ -49,15 +49,22 @@ const useStyles = makeStyles((theme) => ({
   avatarButton: {
     margin: '1rem',
   },
+  errorText: {
+    color: 'red',
+  },
 }))
 
 const EditProfile = () => {
-  const { handleSubmit, control, setValue, getValues } = useForm();
+  const { handleSubmit, control, setValue } = useForm();
   const { currentUser } = useContext(AuthContext);
   const [avatarPreview, setAvatarPreview] = useState(currentUser.userImage?.url || '/default_user_icon.png')
   const [userImage, setUserImage] = useState();
   const classes = useStyles();
   const navigate = useNavigate();
+  const [errorMessages, setErrorMessages] = useState({
+    name: '',
+    profile: '',
+  });
 
   const onSubmit = async (data) => {
     const confirmResult = window.confirm('プロフィールを更新してよろしいですか？');
@@ -85,6 +92,16 @@ const EditProfile = () => {
         console.log('API レスポンス', response.data)
         navigate('/account');
       } catch (error) {
+        if (error.response && error.response.data && error.response.data.errors) {
+          const apiErrors = error.response.data.errors
+
+          setErrorMessages({
+            name: apiErrors.find((e) => e.includes('Name')) || '',
+            profile: apiErrors.find((e) => e.includes('Profile')) || '',
+          })
+        }
+
+        console.log(errorMessages)
         console.error('API レスポンスの取得に失敗しました', error);
       }
     }
@@ -142,6 +159,7 @@ const EditProfile = () => {
                   label='名前'
                   variant='outlined'
                   fullWidth
+                  helperText={<span className={classes.errorText}>{errorMessages.name}</span>}
                 />
               )}
             />
@@ -159,6 +177,7 @@ const EditProfile = () => {
                     minRows={4}
                     multiline
                     variant="outlined"
+                    helperText={<span className={classes.errorText}>{errorMessages.profile}</span>}
                   />
                 )}
               />

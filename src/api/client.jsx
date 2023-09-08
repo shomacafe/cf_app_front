@@ -5,8 +5,10 @@ const options = {
   ignoreHeaders: true
 }
 
+const baseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3001/api/v1';
+
 const clientApi = applyCaseMiddleware(axios.create({
-  baseURL: 'http://localhost:3001/api/v1'
+  baseURL,
 }), options)
 
 export default clientApi

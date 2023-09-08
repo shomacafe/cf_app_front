@@ -55,7 +55,10 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#f5f5f5',
     borderRadius: '10px 10px 0 0',
     borderBottom: '1px solid #ccc',
-  }
+  },
+  errorText: {
+    color: 'red',
+  },
 }));
 
 const ProjectConfirm = ({ handleBack }) => {
@@ -66,6 +69,10 @@ const ProjectConfirm = ({ handleBack }) => {
   const projectDescriptionHtml = draftToHtml(projectFormData.description);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const classes = useStyles();
+  const [errorMessages, setErrorMessages] = useState({
+    startDate: '',
+    endDate: '',
+  });
 
   const formatDate = (date) => {
     return date.toLocaleString('ja-JP', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -134,6 +141,14 @@ const ProjectConfirm = ({ handleBack }) => {
         console.log('API レスポンス', response.data);
         setShowSuccessModal(true)
       } catch (error) {
+        const apiErrors = error.response.data;
+
+        setErrorMessages({
+          startDate: apiErrors.startDate && apiErrors.startDate[0],
+          endDate: apiErrors.endDate && apiErrors.endDate[0],
+        })
+
+        console.log(error.response.data)
         console.error('データの送信に失敗しました', error);
       }
     }
@@ -229,6 +244,12 @@ const ProjectConfirm = ({ handleBack }) => {
             label="公開する"
           />
         </div>
+        {errorMessages &&
+        <>
+          <p className={classes.errorText}>{errorMessages.startDate && errorMessages.startDate}</p>
+          <p className={classes.errorText}>{errorMessages.endDate && errorMessages.endDate}</p>
+        </>
+        }
         <Button variant="contained" color="primary" onClick={handleBack}>
           戻る
         </Button>

@@ -4,7 +4,7 @@ import { Typography, Container, Link } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   footer: {
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: '#deb887',
     color: theme.palette.primary.contrastText,
     padding: '10px 16px',
     [theme.breakpoints.down('xs')]: {
@@ -17,12 +17,11 @@ const useStyles = makeStyles((theme) => ({
   },
   footerImage: {
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     flexWrap: 'wrap',
   },
   footerImageItem: {
-    flexBasis: '100%',
-    maxWidth: '250px',
+    maxWidth: '210px',
     margin: '10px',
   },
 }))
@@ -34,16 +33,16 @@ const Footer = () => {
     <footer className={classes.footer}>
       <Container>
         <div className={classes.footerImage}>
-          <img
-            src="/kemosava.jpeg"
-            alt="プロジェクトをはじめる"
-            className={classes.footerImageItem}
-          />
-          <img
-            src="/lastBoss.png"
-            alt="プロジェクトをはじめる"
-            className={classes.footerImageItem}
-          />
+          <div>
+            <a href='https://www.makuake.com/project/shomacafe02/?from=keywordsearch&keyword=%E3%81%91%E3%82%82%E3%82%B5%E3%83%90&disp_order=6' target="_blank">
+              <img src="/kemono.jpeg" alt="けもサバ" className={classes.footerImageItem} />
+            </a>
+          </div>
+          <div>
+            <a href='https://www.makuake.com/project/shomacafe/?from=keywordsearch&keyword=%E3%83%A9%E3%82%B9%E3%83%9C%E3%82%B9&disp_order=2' target="_blank">
+              <img src="/lastBoss.png" alt="ラスボス" className={classes.footerImageItem} />
+            </a>
+          </div>
         </div>
         <Typography variant='body2' className={classes.footerText}>
           &copy; {new Date().getFullYear()} Shoma Cafe

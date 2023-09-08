@@ -120,7 +120,13 @@ const ReturnForm = ({ handleNext, handleBack }) => {
               name={`returns.${index}.name`}
               control={control}
               defaultValue={returnData.name}
-              rules={{ required: 'リターンの名前は必須です' }}
+              rules={{
+                required: 'リターンの名前は必須です',
+                maxLength: {
+                  value: 30,
+                  message: 'リターン名は30文字以内で入力してください'
+                }
+              }}
               render={({ field }) => (
                 <TextField
                   {...field}
@@ -150,7 +156,13 @@ const ReturnForm = ({ handleNext, handleBack }) => {
             <Controller
                 name={`returns.${index}.description`}
                 control={control}
-                rules={{ required: 'リターンの説明は必須です' }}
+                rules={{
+                  required: 'リターンの説明は必須です',
+                  maxLength: {
+                    value: 300,
+                    message: '説明は300文字以内で入力してください'
+                  },
+                }}
                 render={({ field }) => (
                   <Tooltip title="自由に記入することができます" placement="top-start" arrow>
                     <TextField
@@ -172,7 +184,19 @@ const ReturnForm = ({ handleNext, handleBack }) => {
               <Controller
                 name={`returns.${index}.price`}
                 control={control}
-                rules={{required: 'リターン価格は必須です'}}
+                rules={{
+                  required: 'リターン価格は必須です',
+                  pattern: {
+                    value: /^[0-9]+$/,
+                    message: '整数を入力してください',
+                  },
+                  validate: (value) => {
+                    if (value <= 0) {
+                      return '0より大きい数字で入力してください'
+                    }
+                    return true;
+                  },
+                }}
                 render={({field}) => (
                   <TextField
                     {...field}
@@ -189,7 +213,19 @@ const ReturnForm = ({ handleNext, handleBack }) => {
               <Controller
                 name={`returns.${index}.stock_count`}
                 control={control}
-                rules={{required: '在庫数は必須です'}}
+                rules={{
+                  required: '在庫数は必須です',
+                  pattern: {
+                    value: /^[0-9]+$/,
+                    message: '整数を入力してください',
+                  },
+                  validate: (value) => {
+                    if (value <= 0) {
+                      return '0より大きい数字で入力してください'
+                    }
+                    return true;
+                  },
+                }}
                 render={({field}) => (
                   <TextField
                     {...field}
