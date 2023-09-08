@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
   mainContainer: {
     flex: '1',
     justifyContent: 'center',
-    padding: '50px 10px',
+    padding: '20px 10px',
     [theme.breakpoints.down('sm')]: {
       padding: '0 0 20px 0',
     },

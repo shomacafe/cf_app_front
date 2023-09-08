@@ -25,52 +25,61 @@ const useStyles = makeStyles((theme) => ({
   },
   recommendedHeader: {
     textAlign: 'center',
-    margin: '70px 0 30px',
+    margin: '20px 0 10px',
     [theme.breakpoints.down('xs')]: {
-      margin: '20px 0 10px',
+      margin: '20px 0 0',
     },
+  },
+  bannerInner: {
+    width: '100%',
+    backgroundColor: 'white',
+    display: 'flex',
+    justifyContent: 'center',
   },
   bannerLine: {
     width: '100%',
     display: 'flex',
-    justifyContent: 'center',
-    backgroundColor: 'white',
-    padding: '20px 50px',
     flexWrap: 'wrap',
-    [theme.breakpoints.down('xs')]: {
+    justifyContent: 'space-between',
+    padding: '20px 0',
+    maxWidth: '1200px',
+    [theme.breakpoints.down('md')]: {
       padding: '10px',
     },
+    [theme.breakpoints.down('sm')]: {
+      padding: '5px',
+    },
   },
-  banner: {
-    maxWidth: '200px',
-    width: '100%',
-    height: '80px',
-    margin: '10px 20px 10px',
-    border: '1px solid #ccc',
+  bannerImageContainer: {
+    flex: '1 1 calc(25% - 20px)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    boxShadow: '0 3px 0 rgba(0, 0, 0, 0.2)',
-    fontSize: '16px',
-    textDecoration: 'none',
-    color: '#555',
-    '&:hover': {
-      textDecoration: 'none',
-      color: '#555',
+    margin: '10px',
+    [theme.breakpoints.down('xs')]: {
+      flex: '1 1 calc(50% - 20px)',
     },
-    transition: 'box-shadow 0.3s ease',
+  },
+  bannerImage: {
+    border: '1px solid #ccc',
+    maxWidth: '100%',
+    height: 'auto',
+  },
+  bannerText: {
+    fontSize: '16px',
+    color: '#555',
+    textDecoration: 'none',
     '&:hover': {
-      boxShadow: '0 3px 0 rgba(0, 0, 0, 0.4)',
+      color: '#555',
+      textDecoration: 'none',
     },
     [theme.breakpoints.down('xs')]: {
       fontSize: '10px',
-      height: 'auto',
     },
   },
 }));
 
 const Top = () => {
-  const { isSignedIn, currentUser } = useContext(AuthContext);
   const classes = useStyles();
 
   return (
@@ -78,29 +87,30 @@ const Top = () => {
       <div className={classes.heroInner}>
         <RecommendedProject criteria={'newestSlideshow'} useSlideshow={'useSlideshow'} />
       </div>
-      <div className={classes.bannerLine}>
-        <Card component={Link} to='new/project' className={classes.banner}>
-          <p>プロジェクトをはじめる</p>
-        </Card>
-        <Card component={Link} to='/projects' className={classes.banner}>
-          <p>プロジェクトをさがす</p>
-        </Card>
-        <Card
-          component={Link}
-          to='https://github.com/shomacafe/cf_app_front'
-          target='_blank'
-          className={classes.banner}
-        >
-          <p>Github</p>
-        </Card>
-        <Card
-          component={Link}
-          to='https://www.makuake.com/project/shomacafe02/?from=keywordsearch&keyword=%E3%81%91%E3%82%82%E3%82%B5%E3%83%90&disp_order=6'
-          target='_blank'
-          className={classes.banner}
-        >
-          <img src='/kemosava.jpeg' alt='ケモサバ' style={{ maxWidth: '100%', maxHeight: '100px' }} />
-        </Card>
+
+      <div className={classes.bannerInner}>
+        <div className={classes.bannerLine}>
+          <div className={classes.bannerImageContainer}>
+            <Link to={'/new/project'}>
+              <img src='/project_start.png' alt='プロジェクトをはじめる' className={classes.bannerImage}  />
+            </Link>
+          </div>
+          <div className={classes.bannerImageContainer}>
+            <Link to={'/projects'}>
+              <img src='/project_search.png' alt='プロジェクトをさがす' className={classes.bannerImage} />
+            </Link>
+          </div>
+          <div className={classes.bannerImageContainer}>
+            <Link to={'https://github.com/shomacafe/cf_app_front'} target='_blank'>
+              <img src='/github.jpeg' alt='github' className={classes.bannerImage}  />
+            </Link>
+          </div>
+          <div className={classes.bannerImageContainer}>
+            <Link to={'https://www.makuake.com/project/shomacafe02/?from=keywordsearch&keyword=%E3%81%91%E3%82%82%E3%82%B5%E3%83%90&disp_order=6'} target='_blank'>
+              <img src='/kemono.jpeg' alt='ケモサバ' className={classes.bannerImage} />
+            </Link>
+          </div>
+        </div>
       </div>
       <div className={classes.recommendedInner}>
         <div>

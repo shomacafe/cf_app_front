@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
         setCurrentUser(response?.data.data);
       }
 
-      Cookies.set("isGuest", "false");
+      // Cookies.set("isGuest", "false");
     } catch (error) {
       console.log(error);
     } finally {
@@ -31,35 +31,39 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   };
 
-  const handleGetGuestUser = async () => {
-    try {
-      const response = await getGuestUser();
+  // const handleGetGuestUser = async () => {
+  //   try {
+  //     const response = await getGuestUser();
 
-      if (response?.data) {
-        setIsSignedIn(true);
-        setCurrentUser(response?.data.data);
-      }
+  //     if (response?.data) {
+  //       setIsSignedIn(true);
+  //       setCurrentUser(response?.data.data);
+  //     }
 
-      setIsGuest(true);
-      console.log('currentUser', currentUser)
+  //     setIsGuest(true);
+  //     console.log('currentUser', currentUser)
 
-      Cookies.set("isGuest", "true");
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     Cookies.set("isGuest", "true");
+  //   } catch (error) {
+  //     console.log(error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   useEffect(() => {
-    if(isGuest) {
-      handleGetGuestUser();
-    } else {
-      handleGetCurrentUser();
-    }
-  }, [isGuest, setCurrentUser])
+    handleGetCurrentUser();
+  }, [setCurrentUser]);
 
-  console.log('isGuest', isGuest)
+  // useEffect(() => {
+  //   if(isGuest) {
+  //     handleGetGuestUser();
+  //   } else {
+  //     handleGetCurrentUser();
+  //   }
+  // }, [isGuest, setCurrentUser])
+
+  // console.log('isGuest', isGuest)
 
   return (
     <AuthContext.Provider

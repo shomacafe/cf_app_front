@@ -54,6 +54,9 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(3),
     fontWeight: 'bold',
     margin: '40px 0',
+    [theme.breakpoints.down('xs')]: {
+      fontSize: '20px',
+    },
   },
   projectInfo: {
     marginLeft: '80px',

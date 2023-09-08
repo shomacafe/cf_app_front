@@ -38,7 +38,10 @@ const useStyles = makeStyles((theme) => ({
   },
   link: {
     textDecoration: "none"
-  }
+  },
+  errorText: {
+    color: 'red',
+  },
 }))
 
 
@@ -48,9 +51,12 @@ const SignInForm = () => {
   const { setIsSignedIn, setCurrentUser } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessages, setErrorMessages] = useState('');
+  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
 
   const handleSignIn = async (e) => {
     e.preventDefault();
+    setIsFormSubmitted(true)
 
     const params = {
       email: email,
@@ -77,8 +83,7 @@ const SignInForm = () => {
         alert('ログイン失敗しました。')
       }
     } catch (error) {
-      console.log(error);
-      alert('ログイン失敗しました。')
+      setErrorMessages(error.response.data.errors && error.response.data.errors[0])
     }
   };
 
@@ -88,6 +93,7 @@ const SignInForm = () => {
         <Card className={classes.card}>
           <CardHeader className={classes.header} title='ログイン' />
           <CardContent>
+            {isFormSubmitted && <span className={classes.errorText}>{errorMessages}</span>}
             <TextField
               variant='outlined'
               required
@@ -96,6 +102,7 @@ const SignInForm = () => {
               value={email}
               margin='dense'
               onChange={(e) => setEmail(e.target.value)}
+              helperText={isFormSubmitted && email === '' ? <span className={classes.errorText}>メールアドレスを入力してください。</span> : ''}
             />
             <TextField
               variant='outlined'
@@ -107,6 +114,7 @@ const SignInForm = () => {
               margin='dense'
               autoComplete='current-password'
               onChange={(e) => setPassword(e.target.value)}
+              helperText={isFormSubmitted && password === '' ? <span className={classes.errorText}>パスワードを入力してください。</span> : ''}
             />
             <Button
               type='submit'

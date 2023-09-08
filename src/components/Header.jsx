@@ -16,12 +16,14 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(2),
   },
   appBar: {
-    padding: '10px 16px',
+    padding: '10px 30px',
+    backgroundColor: '#deb887',
     [theme.breakpoints.down('xs')]: {
-      padding: '10px 0'
+      padding: '5px'
     }
   },
   headerImageArea: {
+    margin: 'auto',
     [theme.breakpoints.down('xs')]: {
       margin: 'auto',
     }
@@ -31,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     height: '50px',
   },
   avatar: {
-    marginLeft: 'auto',
+    marginLeft: '10px',
     cursor: 'pointer',
   },
   linkBtn: {
@@ -55,15 +57,22 @@ const useStyles = makeStyles((theme) => ({
   },
   singInHeader: {
     display: 'flex',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
   },
   userInfo: {
+    position: 'absolute',
+    right: '10px',
     display: 'flex',
     alignItems: 'center',
     [theme.breakpoints.down('xs')]: {
       margin: '10px auto',
     }
   },
+  currentUserName: {
+    [theme.breakpoints.down('xs')]: {
+      display: 'none',
+    }
+  }
 }))
 
 const Header = () => {
@@ -134,7 +143,7 @@ const Header = () => {
           <div className={classes.headerImageArea}>
             <Link to='/'>
               <img
-                src="/lastBoss.png"
+                src="/shomacafe_logo.png"
                 alt="ヘッダーロゴ"
                 className={classes.headerImage}
               />
@@ -142,7 +151,7 @@ const Header = () => {
           </div>
           <div className={classes.userInfo}>
             <AuthButtons />
-            <p>{isSignedIn ? currentUser && currentUser.name : '' }</p>
+            <p className={classes.currentUserName}>{isSignedIn ? currentUser && currentUser.name : '' }</p>
             {isSignedIn &&
               <Avatar
                 className={classes.avatar}
