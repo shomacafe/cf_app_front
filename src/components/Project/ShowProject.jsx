@@ -189,7 +189,7 @@ const ShowProject = () => {
           const now = new Date();
           const isProjectStarted = parsedStartDate <= now;
           const isProjectEnded = parsedEndDate < now;
-          setIsPurchaseDisabled(!isProjectStarted || isProjectEnded);
+          setIsPurchaseDisabled(!isProjectStarted || isProjectEnded || !isSignedIn);
 
           const descriptionData = JSON.parse(resProjectData.description);
           const contentState = convertFromRaw({

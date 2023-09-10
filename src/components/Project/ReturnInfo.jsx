@@ -40,7 +40,7 @@ const ReturnInfo = ({ project_id, isPurchaseDisabled }) => {
                 to={`/purchase/confirm?return_id=${returnItem.id}&project_id=${project_id}&quantity=${selectedQuantity}`}
                 disabled={returnItem.stock_count === 0 || isPurchaseDisabled}
               >
-                このリターンを応援購入する
+                応援購入する
               </Button>
             </div>
             <Typography style={{display: 'flex', justifyContent: 'right'}}>支援者：{returnItem.supporter_count}人</Typography>
