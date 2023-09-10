@@ -266,6 +266,7 @@ const ProjectForm = ({ handleNext }) => {
                   timeFormat='HH:mm'
                   timeIntervals={60}
                   minDate={new Date()}
+                  popperPlacement="top-start"
                 />
                 {errors.start_date && <p style={{ color: 'red' }}>{errors.start_date.message}</p>}
               </div>
@@ -289,6 +290,7 @@ const ProjectForm = ({ handleNext }) => {
                   timeFormat='HH:mm'
                   timeIntervals={60}
                   minDate={watchedFields.start_date}
+                  popperPlacement="top-start"
                 />
                 {errors.end_date && <p style={{ color: 'red' }}>{errors.end_date.message}</p>}
               </div>
@@ -325,8 +327,8 @@ const ProjectForm = ({ handleNext }) => {
                 toolbar={{
                   options: ['inline', 'blockType', 'fontSize', 'list', 'textAlign', 'colorPicker', 'link', 'history'],
                   inline: { inDropdown: true },
-                  list: { inDropdown: true },
-                  textAlign: { inDropdown: true },
+                  // list: { inDropdown: true },
+                  // textAlign: { inDropdown: true },
                   link: { inDropdown: true },
                   history: { inDropdown: true },
                   blockType: { options: ['Normal', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'Blockquote', 'Code'], },

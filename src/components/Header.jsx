@@ -57,14 +57,22 @@ const useStyles = makeStyles((theme) => ({
   },
   singInHeader: {
     display: 'flex',
-    // justifyContent: 'space-between',
   },
-  userInfo: {
+  signInUserInfo: {
     position: 'absolute',
+    top: '12px',
+    right: '10px',
+    display: 'flex',
+    alignItems: 'center',
+  },
+  signOutUserInfo: {
+    position: 'absolute',
+    top: '20px',
     right: '10px',
     display: 'flex',
     alignItems: 'center',
     [theme.breakpoints.down('xs')]: {
+      position: 'static',
       margin: '10px auto',
     }
   },
@@ -149,7 +157,7 @@ const Header = () => {
               />
             </Link>
           </div>
-          <div className={classes.userInfo}>
+          <div className={isSignedIn ? classes.signInUserInfo : classes.signOutUserInfo}>
             <AuthButtons />
             <p className={classes.currentUserName}>{isSignedIn ? currentUser && currentUser.name : '' }</p>
             {isSignedIn &&
