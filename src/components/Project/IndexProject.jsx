@@ -37,10 +37,14 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   sortButton: {
+    color: '#4169e1',
     [theme.breakpoints.down('xs')]: {
       fontSize: '0.5rem',
     }
-  }
+  },
+  activeSortButton: {
+    color: '#000080',
+  },
 }));
 
 const IndexProject = () => {
@@ -131,10 +135,10 @@ const IndexProject = () => {
           </Button>
         </div>
         <ButtonGroup className={classes.sortButtonGroup} color='primary' aria-label='outlined primary button group'>
-          <Button onClick={() => setSortOption('newest')} className={classes.sortButton}>新着順</Button>
-          <Button onClick={() => setSortOption('endingSoon')} className={classes.sortButton}>終了日が近い順</Button>
-          <Button onClick={() => setSortOption('totalAmount')} className={classes.sortButton}>支援総額順</Button>
-          <Button onClick={() => setSortOption('supportCount')} className={classes.sortButton}>支援者順</Button>
+          <Button onClick={() => setSortOption('newest')} className={sortOption === 'newest' ? `${classes.sortButton} ${classes.activeSortButton}` : classes.sortButton}>新着順</Button>
+          <Button onClick={() => setSortOption('endingSoon')} className={sortOption === 'endingSoon' ? `${classes.sortButton} ${classes.activeSortButton}` : classes.sortButton}>終了日が近い順</Button>
+          <Button onClick={() => setSortOption('totalAmount')} className={sortOption === 'totalAmount' ? `${classes.sortButton} ${classes.activeSortButton}` : classes.sortButton}>支援総額順</Button>
+          <Button onClick={() => setSortOption('supportCount')} className={sortOption === 'supportCount' ? `${classes.sortButton} ${classes.activeSortButton}` : classes.sortButton}>支援者順</Button>
         </ButtonGroup>
       </div>
       <div style={{ marginTop: '20px' }}>
