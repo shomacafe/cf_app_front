@@ -9,6 +9,17 @@
 ## アプリの使い方
 気軽にクラウドファンディングを体験できるクラウドファンディングシミュレーションアプリです。
 プロジェクトを始めたいユーザー向けの「プロジェクト作成機能」、応援したいユーザー向けの「プロジェクト応援機能」があります。
+### トップ画面
+<img src="https://github.com/shomacafe/crowd_funding_app/assets/97627380/0ce5e13a-f8d6-47d9-9d45-e25765624155" width="700" />
+  
+### プロジェクトをはじめる
+<img src="https://github.com/shomacafe/crowd_funding_app/assets/97627380/e7e104ad-5abe-4865-87dd-7b32e3861850" width="700" />
+
+### プロジェクトをさがす
+<img src="https://github.com/shomacafe/crowd_funding_app/assets/97627380/801098a5-2244-4ba4-97fc-6635f1185d45" width="700" />
+
+### リターン（返礼品）を応援購入する
+<img src="https://github.com/shomacafe/crowd_funding_app/assets/97627380/c8b35901-14a3-429d-a296-8dd379c30ed0" width="700" />
 
 ## 機能一覧
 * ユーザー登録・ログイン機能（railsのgemのdevise_token_authでトークン発行後ReactでCookieに保存）
@@ -52,4 +63,6 @@
 ## ER図
 <img src="https://github.com/shomacafe/crowd_funding_app/assets/97627380/8f2c68c5-acbd-483f-94e2-bb015d6a30d2" width="600" /> 
 
+## バックエンド側の実装
+https://github.com/shomacafe/cf_app_back
 
