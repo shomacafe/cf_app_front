@@ -1,71 +1,55 @@
-# Getting Started with Create React App
+# クラウドファンディングシミュレーションアプリ（フロントエンド側）
+フロントエンドはReact、バックエンドはRails（APIモード）でを制作しました。
+<p></p>
+<img src="https://github.com/shomacafe/crowd_funding_app/assets/97627380/54299a1a-5b28-4349-85c6-4f063826d8e2" width="200" /> 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 制作背景
+私は以前クラウドファンディングサイト「Makuake」にてプロジェクトを実施した経験があるのですが、その際にいきなりプロジェクトを始めることに少し不安を感じておりました。
+ですので、そういった本番プロジェクトを始める前に「クラウドファンディングのシミュレーションができるアプリ」があれば良いと思い制作しました。
+## アプリの使い方
+気軽にクラウドファンディングを体験できるクラウドファンディングシミュレーションアプリです。
+プロジェクトを始めたいユーザー向けの「プロジェクト作成機能」、応援したいユーザー向けの「プロジェクト応援機能」があります。
 
-## Available Scripts
+## 機能一覧
+* ユーザー登録・ログイン機能（railsのgemのdevise_token_authでトークン発行後ReactでCookieに保存）
+* ゲストログイン機能
+* プロジェクト作成機能
+* プロジェクト編集機能
+* プロジェクト一覧表示機能
+* プロジェクト詳細表示機能
+* 作成済プロジェクト一覧表示機能
+* リターン応援機能
+* 応援済リターン一覧表示機能
+* 検索機能
+* ソート機能
+* ユーザーアカウント詳細表示機能
+* ユーザーアカウント編集機能
 
-In the project directory, you can run:
+## API一覧
+●プロジェクト関連
+* GET /api/v1/projects: 全てのプロジェクト一覧の取得（プロジェクト一覧）
+* GET /api/v1/projects/index_by_user: 作成済プロジェクト一覧の取得
+* POST /api/v1/projects: プロジェクトの作成（プロジェクト作成画面）
+* GET /api/v1/projects/{project_id}: 特定のプロジェクトの詳細情報の取得（プロジェクト詳細画面）
+* PUT /api/v1/projects/{project_id}: プロジェクトの更新（プロジェクト編集画面）
 
-### `npm start`
+●応援購入関連
+* POST /api/v1/purchases: リターンの応援購入（購入機能）
+* GET /api/v1/purchases: 購入済みリターン情報の取得（購入履歴）
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+●ユーザー関連
+* POST /api/v1/auth: ユーザーの作成（ユーザー登録画面）
+* POST /api/v1/auth/sign_in: メールアドレスとパスワードによる認証（ログイン画面）
+* DELETE /api/v1/auth/sign_out: ログアウト
+* GET /api/v1/auth/settions_user: ログイン中のユーザー情報の取得
+* GET /api/v1/auth/users/{user_id}: ユーザーアカウント情報の取得
+* PUT/api/v1/account/update: アカウントの更新
+* PUT/api/v1/profile/update: プロフィールの更新
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## テーブル設計書
+[テーブル設計書（Excel）](https://docs.google.com/spreadsheets/d/1KHc1_DgovkktnAECN8qxKHghyw0acoN-LTr3VdNvrBM/edit#gid=0)
 
-### `npm test`
+## ER図
+<img src="https://github.com/shomacafe/crowd_funding_app/assets/97627380/8f2c68c5-acbd-483f-94e2-bb015d6a30d2" width="600" /> 
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-# cf_app_front
