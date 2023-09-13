@@ -1,7 +1,7 @@
 # クラウドファンディングシミュレーションアプリ（フロントエンド側）
-フロントエンドはReact、バックエンドはRails（APIモード）でを制作しました。
+フロントエンドはReact、バックエンドはRails（APIモード）で制作しました。
 <p></p>
-<img src="https://github.com/shomacafe/crowd_funding_app/assets/97627380/54299a1a-5b28-4349-85c6-4f063826d8e2" width="200" /> 
+<img src="https://github.com/shomacafe/crowd_funding_app/assets/97627380/d87b65dd-0323-49ac-9958-54f5cd2672ab" width="300" /> 
 
 ## 制作背景
 私は以前クラウドファンディングサイト「Makuake」にてプロジェクトを実施した経験があるのですが、その際にいきなりプロジェクトを始めることに少し不安を感じておりました。
